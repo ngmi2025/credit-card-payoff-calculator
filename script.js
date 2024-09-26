@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const potentialSavings = document.getElementById('potentialSavings');
         
         const savings = calculateBalanceTransferSavings(balance, totalInterest);
-        potentialSavings.textContent = `$${Math.round(savings)} in interest`;
+        potentialSavings.textContent = `$${Math.round(savings)}`;
 
         recommendationDiv.style.display = 'block';
     }

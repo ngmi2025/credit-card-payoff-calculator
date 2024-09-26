@@ -71,7 +71,7 @@ button:hover {
     padding: 10px;
     border: none;
     border-radius: 4px;
-    background-color: #808080; /* Grey for non-selected button */
+    background-color: #808080;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -79,12 +79,12 @@ button:hover {
 }
 
 .goal-button.selected {
-    background-color: #F6941F; /* Orange for selected button */
+    background-color: #F6941F;
     color: white;
 }
 
 .goal-button:hover {
-    background-color: #F6941F; /* Orange on hover */
+    background-color: #F6941F;
     opacity: 0.8;
 }
 
@@ -212,8 +212,8 @@ tr:nth-child(even) {
 }
 
 .card-details-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 15px;
     margin-bottom: 20px;
 }
@@ -223,17 +223,21 @@ tr:nth-child(even) {
     padding: 10px;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 .detail-label {
     font-weight: bold;
     color: #555;
-    display: block;
-    margin-bottom: 5px;
+    flex: 1;
 }
 
 .detail-value {
     color: #333;
+    flex: 2;
+    text-align: right;
 }
 
 .savings-callout {

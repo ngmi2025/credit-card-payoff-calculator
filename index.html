@@ -22,27 +22,27 @@
                         <input type="number" id="apr" required min="0" max="100" step="0.01">
                     </div>
                     <div class="input-group">
-                        <label for="payment">Monthly Payment ($)</label>
-                        <input type="number" id="payment" required min="0" step="0.01">
+                        <label for="minPayment">Minimum Monthly Payment ($)</label>
+                        <input type="number" id="minPayment" required min="0" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="extraPayment">Extra Monthly Payment ($)</label>
+                        <input type="number" id="extraPayment" min="0" step="0.01" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="goalDate">Payoff Goal Date</label>
+                        <input type="date" id="goalDate">
                     </div>
                     <button type="submit" class="cta-button">Calculate</button>
                 </form>
             </div>
             <div class="results-section hidden" id="results">
                 <h2>Payoff Results</h2>
-                <div class="result-item">
-                    <span class="result-label">Time to pay off:</span>
-                    <span id="payoffTime" class="result-value"></span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Total interest paid:</span>
-                    <span id="totalInterest" class="result-value"></span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Total amount paid:</span>
-                    <span id="totalPaid" class="result-value"></span>
-                </div>
+                <div id="scenarioResults"></div>
                 <div id="payoffChart"></div>
+                <div id="interestSaved"></div>
+                <div id="goalResults"></div>
+                <div id="tips"></div>
             </div>
         </div>
     </div>

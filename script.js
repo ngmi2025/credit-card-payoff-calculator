@@ -191,36 +191,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function displayBalanceTransferRecommendation(balance, totalInterest) {
         const recommendationDiv = document.getElementById('balanceTransferRecommendation');
-        recommendationDiv.innerHTML = ''; // Clear previous content
-
-        const header = document.createElement('h2');
-        header.textContent = 'Balance Transfer Recommendation';
-        recommendationDiv.appendChild(header);
-
-        const cardInfo = document.createElement('div');
-        cardInfo.className = 'card-info';
-        cardInfo.innerHTML = `
-            <h3>Citi® Diamond Preferred® Card</h3>
-            <p>0% Intro APR for 21 months on balance transfers and 0% Intro APR for 12 months on purchases</p>
-            <p>Annual Fee: $0</p>
-            <p>Credit Recommended: Good to Excellent (670-850)</p>
-        `;
-        recommendationDiv.appendChild(cardInfo);
-
+        const potentialSavings = document.getElementById('potentialSavings');
+        
         const savings = calculateBalanceTransferSavings(balance, totalInterest);
-        const savingsInfo = document.createElement('div');
-        savingsInfo.className = 'savings-info';
-        savingsInfo.innerHTML = `
-            <p>By transferring your balance to this card, you could potentially save:</p>
-            <h3>$${Math.round(savings)} in interest</h3>
-            <p>This assumes you pay off the balance within the 21-month 0% APR period.</p>
-        `;
-        recommendationDiv.appendChild(savingsInfo);
-
-        const disclaimer = document.createElement('p');
-        disclaimer.className = 'disclaimer';
-        disclaimer.textContent = 'Note: Balance transfer fees may apply. Please review all terms and conditions before applying for a new credit card.';
-        recommendationDiv.appendChild(disclaimer);
+        potentialSavings.textContent = `$${Math.round(savings)} in interest`;
 
         recommendationDiv.style.display = 'block';
     }

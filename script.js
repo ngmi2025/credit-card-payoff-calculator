@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
             row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;
-            row.insertCell(2).textContent = Math.ceil(monthsToPay);
+            row.insertCell(2).textContent = Math.round(monthsToPay);
         }
 
         paymentTableDiv.style.display = 'block';

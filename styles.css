@@ -1,3 +1,4 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -46,52 +47,45 @@ select {
     box-sizing: border-box;
 }
 
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
+/* Button styles */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
 }
 
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Goal buttons */
 .goal-button {
     width: 48%;
     padding: 10px;
     border: none;
     border-radius: 4px;
-    background-color: #e0e0e0;
-    color: #333;
+    background-color: grey; /* Default non-selected button */
+    color: white;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
+    margin-right: 10px;
 }
 
 .goal-button.selected {
-    background-color: #007bff;
-    color: #fff;
+    background-color: #F6941F; /* Orange for selected button */
+    color: white;
 }
 
-#calculate {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
+.goal-button:hover {
+    opacity: 0.8;
 }
 
-#calculate:hover {
-    background-color: #0056b3;
-}
-
-#results {
-    background-color: #e9f7ef;
-    padding: 20px;
-    border-radius: 5px;
-    margin-top: 20px;
-}
-
+/* Results Section */
 .results-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -112,11 +106,12 @@ select {
 
 .result-value {
     font-size: 18px;
-    color: #28a745;
+    color: black; /* Changed to black */
     display: block;
     margin-top: 5px;
 }
 
+/* Actionable Insights */
 #actionableInsight {
     margin-top: 20px;
     padding: 10px;
@@ -125,10 +120,12 @@ select {
     color: #856404;
 }
 
+/* Chart Styles */
 #payoffChart {
     margin-top: 20px;
 }
 
+/* Payment Comparison Table */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -150,10 +147,7 @@ tr:nth-child(even) {
     background-color: #f8f8f8;
 }
 
-#shareResults {
-    margin-top: 20px;
-}
-
+/* Highlight animation for results */
 .highlight {
     animation: highlight 1s ease-in-out;
 }
@@ -161,4 +155,9 @@ tr:nth-child(even) {
 @keyframes highlight {
     0% { background-color: #ffff99; }
     100% { background-color: transparent; }
+}
+
+/* Hide the share results button */
+#shareResults {
+    display: none;
 }

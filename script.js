@@ -1,30 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const introRateCheckbox = document.getElementById('introRate');
-    const introRateDetails = document.getElementById('introRateDetails');
-    const payoffGoalSelect = document.getElementById('payoffGoal');
-    const timeGoalDiv = document.getElementById('timeGoal');
-    const fixedPaymentDiv = document.getElementById('fixedPayment');
+    const payoffGoalRadios = document.getElementsByName('payoffGoal');
+    const timeGoalInput = document.getElementById('timeGoalInput');
+    const fixedPaymentInput = document.getElementById('fixedPaymentInput');
     const calculateButton = document.getElementById('calculate');
     const resultsDiv = document.getElementById('results');
     const paymentTableDiv = document.getElementById('paymentTable');
+    const shareResultsButton = document.getElementById('shareResults');
+    let payoffChart;
 
-    introRateCheckbox.addEventListener('change', function() {
-        introRateDetails.style.display = this.checked ? 'block' : 'none';
-    });
-
-    payoffGoalSelect.addEventListener('change', function() {
-        if (this.value === 'time') {
-            timeGoalDiv.style.display = 'block';
-            fixedPaymentDiv.style.display = 'none';
-        } else {
-            timeGoalDiv.style.display = 'none';
-            fixedPaymentDiv.style.display = 'block';
-        }
+    payoffGoalRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'time') {
+                timeGoalInput.style.display = 'block';
+                fixedPaymentInput.style.display = 'none';
+            } else {
+                timeGoalInput.style.display = 'none';
+                fixedPaymentInput.style.display = 'block';
+            }
+        });
     });
 
     calculateButton.addEventListener('click', function(event) {
         event.preventDefault();
-        console.log('Calculate button clicked');
         try {
             calculatePayoff();
         } catch (error) {
@@ -33,15 +30,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    shareResultsButton.addEventListener('click', function() {
+        // Implement share functionality here
+        alert('Share functionality to be implemented');
+    });
+
     function calculatePayoff() {
-        console.log('Starting calculatePayoff function');
         const balance = parseFloat(document.getElementById('balance').value);
         const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
         const monthlyInterestRate = annualInterestRate / 12;
-        const payoffGoal = document.getElementById('payoffGoal').value;
+        const payoffGoal = document.querySelector('input[name="payoffGoal"]:checked').value;
         let monthlyPayment, monthsToPay;
-
-        console.log('Balance:', balance, 'Annual Interest Rate:', annualInterestRate, 'Payoff Goal:', payoffGoal);
 
         if (isNaN(balance) || isNaN(annualInterestRate) || balance <= 0 || annualInterestRate < 0) {
             throw new Error('Invalid balance or interest rate');
@@ -64,14 +63,19 @@ document.addEventListener('DOMContentLoaded', function() {
             monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
         }
 
-        console.log('Monthly Payment:', monthlyPayment, 'Months to Pay:', monthsToPay);
-
         const totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
         const startDate = new Date();
         const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
 
         displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
         displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest);
+        displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
+        displayPayoffChart(balance, monthlyPayment, monthsToPay);
+
+        resultsDiv.classList.add('highlight');
+        setTimeout(() => resultsDiv.classList.remove('highlight'), 1000);
+
+        shareResultsButton.style.display = 'block';
     }
 
     function calculateMonthlyPayment(balance, monthlyInterestRate, months) {
@@ -103,22 +107,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
 
-        // Calculate base scenario
         const baseMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, baseMonthlyPayment);
         const baseTotalInterestRecalculated = calculateTotalInterest(balance, baseMonthlyPayment, baseMonthsToPay);
 
-        // Loop to calculate different payment scenarios
         for (let i = 1; i <= 5; i++) {
             const monthlyPayment = baseMonthlyPayment + (baseMonthlyPayment * i * 0.1);
             const monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
-            
-            // Recalculate total interest for this new monthly payment
             const newTotalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
-            
-            // Interest savings should be recalculated based on the new total interest
             const interestSavings = baseTotalInterestRecalculated - newTotalInterest;
 
-            // Update the table with correct rounding
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
             row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;
@@ -126,5 +123,64 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         paymentTableDiv.style.display = 'block';
+    }
+
+    function displayActionableInsight(monthlyPayment, totalInterest, monthsToPay) {
+        const increasedPayment = monthlyPayment * 1.2;
+        const newMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, increasedPayment);
+        const newTotalInterest = calculateTotalInterest(balance, increasedPayment, newMonthsToPay);
+        const interestSavings = totalInterest - newTotalInterest;
+        const timeSavings = monthsToPay - newMonthsToPay;
+
+        const insightElement = document.getElementById('actionableInsight');
+        insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${Math.round(timeSavings)} months earlier.`;
+    }
+
+    function displayPayoffChart(balance, monthlyPayment, monthsToPay) {
+        const ctx = document.getElementById('payoffChart').getContext('2d');
+        const labels = [];
+        const balanceData = [];
+        let currentBalance = balance;
+
+        for (let i = 0; i <= monthsToPay; i++) {
+            labels.push(`Month ${i}`);
+            balanceData.push(currentBalance);
+            currentBalance = Math.max(0, currentBalance - monthlyPayment + (currentBalance * monthlyInterestRate));
+        }
+
+        if (payoffChart) {
+            payoffChart.destroy();
+        }
+
+        payoffChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Balance',
+                    data: balanceData,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Balance ($)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months'
+                        }
+                    }
+                }
+            }
+        });
     }
 });

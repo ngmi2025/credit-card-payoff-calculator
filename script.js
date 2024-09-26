@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const calculateButton = document.getElementById('calculate');
     const resultsDiv = document.getElementById('results');
     const paymentTableDiv = document.getElementById('paymentTable');
-    const shareResultsButton = document.getElementById('shareResults');
     let payoffChart;
 
     function toggleGoalSelection(selectedButton, otherButton) {
@@ -32,11 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error in calculatePayoff:', error);
             alert('An error occurred while calculating. Please check your inputs and try again.');
         }
-    });
-
-    shareResultsButton.addEventListener('click', function() {
-        // Implement share functionality here
-        alert('Share functionality to be implemented');
     });
 
     function calculatePayoff() {
@@ -72,14 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
 
         displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
-        displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest);
+        displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
         displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
         displayPayoffChart(balance, monthlyPayment, monthsToPay);
 
         resultsDiv.classList.add('highlight');
         setTimeout(() => resultsDiv.classList.remove('highlight'), 1000);
-
-        shareResultsButton.style.display = 'block';
     }
 
     function calculateMonthlyPayment(balance, monthlyInterestRate, months) {
@@ -107,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resultsDiv.style.display = 'block';
     }
 
-    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseTotalInterest) {
+    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseTotalInterest, startDate) {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
 
@@ -150,8 +142,13 @@ document.addEventListener('DOMContentLoaded', function() {
         let currentBalance = balance;
         const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
 
+        const startDate = new Date();
+
         for (let i = 0; i <= monthsToPay; i++) {
-            labels.push(`Month ${i}`);
+            const currentDate = new Date(startDate);
+            currentDate.setMonth(currentDate.getMonth() + i);
+            const monthName = currentDate.toLocaleString('default', { month: 'short' });
+            labels.push(monthName);  // Updated to show actual months
             balanceData.push(currentBalance);
             currentBalance = Math.max(0, currentBalance - monthlyPayment + (currentBalance * monthlyInterestRate));
         }

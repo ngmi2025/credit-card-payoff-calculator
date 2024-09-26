@@ -45,7 +45,7 @@ label {
     color: #002f6c;
 }
 
-input[type="number"] {
+input[type="number"], input[type="date"] {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -77,18 +77,32 @@ input[type="number"] {
     border-radius: 8px;
 }
 
-.result-item {
-    margin-bottom: 15px;
+.scenario {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.result-label {
-    font-weight: 600;
+.scenario h3 {
     color: #002f6c;
+    margin-top: 0;
 }
 
-.result-value {
-    font-weight: 700;
-    color: #008cd2;
+#interestSaved, #goalResults, #tips {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e9f7ff;
+    border-radius: 8px;
+}
+
+#tips ul {
+    padding-left: 20px;
+}
+
+#tips li {
+    margin-bottom: 10px;
 }
 
 .hidden {

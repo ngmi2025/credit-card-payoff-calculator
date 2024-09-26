@@ -184,4 +184,98 @@ tr:nth-child(even) {
     padding: 15px;
 }
 
-.card-image
+.card-image-column {
+    flex: 1;
+    max-width: 25%;
+    padding-right: 15px;
+}
+
+.card-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.card-details-column {
+    flex: 3;
+}
+
+.card-details-column h3 {
+    color: #0077be;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.card-details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    color: #333;
+}
+
+.savings-callout {
+    background-color: #e6f7ff;
+    border: 1px solid #91d5ff;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.savings-callout p {
+    margin: 0;
+    color: #0050b3;
+}
+
+.savings-callout h3 {
+    color: #52c41a;
+    font-size: 24px;
+    margin: 10px 0 0;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.apply-button, .learn-more-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.apply-button {
+    background-color: #1890ff;
+    color: white;
+}
+
+.learn-more-button {
+    background-color: #f0f0f0;
+    color: #333;
+}

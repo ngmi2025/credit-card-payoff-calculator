@@ -103,12 +103,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
 
+        // Calculate base scenario
+        const baseMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, baseMonthlyPayment);
+        const baseTotalInterestRecalculated = calculateTotalInterest(balance, baseMonthlyPayment, baseMonthsToPay);
+
+        // Loop to calculate different payment scenarios
         for (let i = 1; i <= 5; i++) {
             const monthlyPayment = baseMonthlyPayment + (baseMonthlyPayment * i * 0.1);
             const monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
-            const totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
-            const interestSavings = baseTotalInterest - totalInterest;
+            
+            // Recalculate total interest for this new monthly payment
+            const newTotalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
+            
+            // Interest savings should be recalculated based on the new total interest
+            const interestSavings = baseTotalInterestRecalculated - newTotalInterest;
 
+            // Update the table
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
             row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;

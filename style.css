@@ -1,64 +1,107 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Open Sans', sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 20px;
     background-color: #f4f4f4;
+    color: #333;
 }
 
 .calculator-container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #002f6c;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #002f6c;
+    font-weight: 600;
+}
+
+.calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
 }
 
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
+    font-weight: 600;
+    color: #002f6c;
 }
 
 input[type="number"] {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 16px;
 }
 
-button {
+.cta-button {
     display: block;
     width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
+    padding: 12px;
+    background-color: #002f6c;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: #45a049;
+.cta-button:hover {
+    background-color: #008cd2;
 }
 
-#results {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #e9f7ef;
-    border-radius: 4px;
+.results-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.result-item {
+    margin-bottom: 15px;
+}
+
+.result-label {
+    font-weight: 600;
+    color: #002f6c;
+}
+
+.result-value {
+    font-weight: 700;
+    color: #008cd2;
 }
 
 .hidden {
     display: none;
+}
+
+#payoffChart {
+    margin-top: 20px;
+    height: 300px;
+}
+
+@media (max-width: 768px) {
+    .calculator-grid {
+        grid-template-columns: 1fr;
+    }
 }

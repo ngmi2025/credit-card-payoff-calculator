@@ -7,7 +7,7 @@ body {
 }
 
 .calculator-container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     background-color: #fff;
     padding: 20px;
@@ -18,6 +18,13 @@ body {
 h1, h2 {
     color: #333;
     text-align: center;
+}
+
+.input-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
 .input-group {
@@ -39,6 +46,12 @@ select {
     box-sizing: border-box;
 }
 
+.radio-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
 button {
     display: block;
     width: 100%;
@@ -56,9 +69,10 @@ button:hover {
 }
 
 #results {
+    background-color: #e9f7ef;
+    padding: 20px;
+    border-radius: 5px;
     margin-top: 20px;
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
 }
 
 .results-grid {
@@ -68,18 +82,34 @@ button:hover {
 }
 
 .result-item {
-    display: flex;
-    flex-direction: column;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .result-label {
     font-weight: bold;
-    margin-bottom: 5px;
+    color: #555;
 }
 
 .result-value {
     font-size: 18px;
-    color: #000;
+    color: #28a745;
+    display: block;
+    margin-top: 5px;
+}
+
+#actionableInsight {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fff3cd;
+    border-left: 5px solid #ffc107;
+    color: #856404;
+}
+
+#payoffChart {
+    margin-top: 20px;
 }
 
 table {
@@ -89,9 +119,9 @@ table {
 }
 
 th, td {
-    border: 1px solid #ddd;
     padding: 12px;
-    text-align: left;
+    text-align: center;
+    border: 1px solid #ddd;
 }
 
 th {
@@ -101,4 +131,17 @@ th {
 
 tr:nth-child(even) {
     background-color: #f8f8f8;
+}
+
+#shareResults {
+    margin-top: 20px;
+}
+
+.highlight {
+    animation: highlight 1s ease-in-out;
+}
+
+@keyframes highlight {
+    0% { background-color: #ffff99; }
+    100% { background-color: transparent; }
 }

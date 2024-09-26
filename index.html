@@ -5,56 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Credit Card Payoff Calculator</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="calculator-container">
         <h1>Credit Card Payoff Calculator</h1>
-        <div class="input-group">
-            <label for="balance">Balance ($):</label>
-            <input type="number" id="balance" min="0" step="0.01" required>
-        </div>
-        <div class="input-group">
-            <label for="interestRate">Interest Rate (%):</label>
-            <input type="number" id="interestRate" min="0" max="100" step="0.01" required>
-        </div>
-        <div class="input-group">
-            <input type="checkbox" id="introRate">
-            <label for="introRate">Introductory Rate?</label>
-        </div>
-        <div id="introRateDetails" style="display: none;">
+        <div class="input-section">
             <div class="input-group">
-                <label for="introDuration">Intro Duration (months):</label>
-                <input type="number" id="introDuration" min="1" step="1">
+                <label for="balance">Balance ($):</label>
+                <input type="number" id="balance" min="0" step="0.01" required>
             </div>
             <div class="input-group">
-                <label for="introAPR">Intro APR (%):</label>
-                <input type="number" id="introAPR" min="0" max="100" step="0.01">
+                <label for="interestRate">Interest Rate (%):</label>
+                <input type="number" id="interestRate" min="0" max="100" step="0.01" required>
             </div>
             <div class="input-group">
-                <label for="regularAPR">Regular APR (%):</label>
-                <input type="number" id="regularAPR" min="0" max="100" step="0.01">
+                <label>Payoff Goal:</label>
+                <div class="radio-group">
+                    <input type="radio" id="timeGoal" name="payoffGoal" value="time" checked>
+                    <label for="timeGoal">Pay off within a certain time</label>
+                    <input type="radio" id="fixedPayment" name="payoffGoal" value="fixed">
+                    <label for="fixedPayment">Pay off with a fixed monthly payment</label>
+                </div>
             </div>
-        </div>
-        <div class="input-group">
-            <label for="payoffGoal">Payoff Goal:</label>
-            <select id="payoffGoal">
-                <option value="time">Pay off within a certain time</option>
-                <option value="fixed">Pay off with a fixed monthly payment</option>
-            </select>
-        </div>
-        <div id="timeGoal">
-            <div class="input-group">
+            <div id="timeGoalInput">
                 <label for="monthsToPay">Months to pay off:</label>
                 <input type="number" id="monthsToPay" min="1" step="1">
             </div>
-        </div>
-        <div id="fixedPayment" style="display: none;">
-            <div class="input-group">
+            <div id="fixedPaymentInput" style="display: none;">
                 <label for="fixedMonthlyPayment">Fixed Monthly Payment ($):</label>
-                <input type="number" id="fixedMonthlyPayment" min="0" step="0.01" required>
+                <input type="number" id="fixedMonthlyPayment" min="0" step="0.01">
             </div>
+            <button id="calculate">Calculate</button>
         </div>
-        <button id="calculate">Calculate</button>
         <div id="results" style="display: none;">
             <h2>Results</h2>
             <div class="results-grid">
@@ -75,6 +58,8 @@
                     <span class="result-value" id="totalInterest"></span>
                 </div>
             </div>
+            <div id="actionableInsight"></div>
+            <canvas id="payoffChart"></canvas>
         </div>
         <div id="paymentTable" style="display: none;">
             <h2>Payment Comparison</h2>
@@ -90,6 +75,7 @@
                 </tbody>
             </table>
         </div>
+        <button id="shareResults" style="display: none;">Share Results</button>
     </div>
     <script src="script.js"></script>
 </body>

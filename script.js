@@ -1,205 +1,233 @@
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const timeGoalButton = document.getElementById('timeGoal');
+    const fixedPaymentButton = document.getElementById('fixedPayment');
+    const timeGoalInput = document.getElementById('timeGoalInput');
+    const fixedPaymentInput = document.getElementById('fixedPaymentInput');
+    const calculateButton = document.getElementById('calculate');
+    const resultsDiv = document.getElementById('results');
+    const paymentTableDiv = document.getElementById('paymentTable');
+    let payoffChart;
 
-.calculator-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    function toggleGoalSelection(selectedButton, otherButton) {
+        selectedButton.classList.add('selected');
+        otherButton.classList.remove('selected');
+        if (selectedButton === timeGoalButton) {
+            timeGoalInput.style.display = 'block';
+            fixedPaymentInput.style.display = 'none';
+        } else {
+            timeGoalInput.style.display = 'none';
+            fixedPaymentInput.style.display = 'block';
+        }
+    }
 
-h1, h2 {
-    color: #333;
-    text-align: center;
-}
+    timeGoalButton.addEventListener('click', () => toggleGoalSelection(timeGoalButton, fixedPaymentButton));
+    fixedPaymentButton.addEventListener('click', () => toggleGoalSelection(fixedPaymentButton, timeGoalButton));
 
-.input-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
+    calculateButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        try {
+            calculatePayoff();
+        } catch (error) {
+            console.error('Error in calculatePayoff:', error);
+            alert('An error occurred while calculating. Please check your inputs and try again.');
+        }
+    });
 
-.input-group {
-    margin-bottom: 20px;
-}
+    function calculatePayoff() {
+        const balance = parseFloat(document.getElementById('balance').value);
+        const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+        const monthlyInterestRate = annualInterestRate / 12;
+        const payoffGoal = document.querySelector('.goal-button.selected').id;
+        let monthlyPayment, monthsToPay;
 
-label {
-    display: block;
-    margin-bottom: 5px;
-}
+        if (isNaN(balance) || isNaN(annualInterestRate) || balance <= 0 || annualInterestRate < 0) {
+            throw new Error('Invalid balance or interest rate');
+        }
 
-input[type="number"],
-input[type="text"],
-select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
+        if (payoffGoal === 'timeGoal') {
+            monthsToPay = parseInt(document.getElementById('monthsToPay').value);
+            if (isNaN(monthsToPay) || monthsToPay <= 0) {
+                throw new Error('Invalid months to pay');
+            }
+            monthlyPayment = calculateMonthlyPayment(balance, monthlyInterestRate, monthsToPay);
+        } else {
+            monthlyPayment = parseFloat(document.getElementById('fixedMonthlyPayment').value);
+            if (isNaN(monthlyPayment) || monthlyPayment <= 0) {
+                throw new Error('Invalid fixed monthly payment');
+            }
+            if (monthlyPayment <= balance * monthlyInterestRate) {
+                throw new Error('Monthly payment is too low to pay off the balance');
+            }
+            monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
+        }
 
-/* Button styles */
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px;
-}
+        const totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
+        const startDate = new Date();
+        const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
 
-button:hover {
-    background-color: #0056b3;
-}
+        displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
+        displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
+        displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
+        displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate);
+        displayBalanceTransferRecommendation(balance, totalInterest);
 
-/* Goal buttons */
-.goal-button {
-    width: 48%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: grey; /* Default non-selected button */
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    margin-right: 10px;
-}
+        resultsDiv.classList.add('highlight');
+        setTimeout(() => resultsDiv.classList.remove('highlight'), 1000);
+    }
 
-.goal-button.selected {
-    background-color: #F6941F; /* Orange for selected button */
-    color: white;
-}
+    function calculateMonthlyPayment(balance, monthlyInterestRate, months) {
+        return (balance * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, months)) / (Math.pow(1 + monthlyInterestRate, months) - 1);
+    }
 
-.goal-button:hover {
-    opacity: 0.8;
-}
+    function calculateMonthsToPay(balance, monthlyInterestRate, payment) {
+        return Math.log(payment / (payment - balance * monthlyInterestRate)) / Math.log(1 + monthlyInterestRate);
+    }
 
-/* Results Section */
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
+    function calculateTotalInterest(balance, monthlyPayment, months) {
+        return monthlyPayment * months - balance;
+    }
 
-.result-item {
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    function formatDate(date) {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const year = date.getFullYear().toString().slice(-2);
+        return `${months[date.getMonth()]} ${year}`;
+    }
 
-.result-label {
-    font-weight: bold;
-    color: #555;
-}
+    function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
+        document.getElementById('monthlyPayment').textContent = `$${Math.round(monthlyPayment)}`;
+        document.getElementById('startDate').textContent = formatDate(startDate);
+        document.getElementById('payOffDate').textContent = formatDate(payOffDate);
+        document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest)}`;
+        resultsDiv.style.display = 'block';
+    }
 
-.result-value {
-    font-size: 18px;
-    color: black; /* Changed to black */
-    display: block;
-    margin-top: 5px;
-}
+    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseTotalInterest, startDate) {
+        const tableBody = document.getElementById('paymentTableBody');
+        tableBody.innerHTML = '';
 
-/* Actionable Insights */
-#actionableInsight {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #fff3cd;
-    border-left: 5px solid #ffc107;
-    color: #856404;
-}
+        const baseMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, baseMonthlyPayment);
+        const baseTotalInterestRecalculated = calculateTotalInterest(balance, baseMonthlyPayment, baseMonthsToPay);
 
-/* Chart Styles */
-#payoffChart {
-    margin-top: 20px;
-}
+        for (let i = 1; i <= 5; i++) {
+            const monthlyPayment = baseMonthlyPayment + (baseMonthlyPayment * i * 0.1);
+            const monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
+            const newTotalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
+            const interestSavings = baseTotalInterestRecalculated - newTotalInterest;
 
-/* Payment Comparison Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+            const row = tableBody.insertRow();
+            row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
+            row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;
+            row.insertCell(2).textContent = Math.round(monthsToPay);
+        }
 
-th, td {
-    padding: 12px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
+        paymentTableDiv.style.display = 'block';
+    }
 
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
+    function displayActionableInsight(monthlyPayment, totalInterest, monthsToPay) {
+        const increasedPayment = monthlyPayment * 1.2;
+        const balance = parseFloat(document.getElementById('balance').value);
+        const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+        const monthlyInterestRate = annualInterestRate / 12;
+        const newMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, increasedPayment);
+        const newTotalInterest = calculateTotalInterest(balance, increasedPayment, newMonthsToPay);
+        const interestSavings = totalInterest - newTotalInterest;
+        const timeSavings = monthsToPay - newMonthsToPay;
 
-tr:nth-child(even) {
-    background-color: #f8f8f8;
-}
+        const insightElement = document.getElementById('actionableInsight');
+        insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${Math.round(timeSavings)} months earlier.`;
+    }
 
-/* Highlight animation for results */
-.highlight {
-    animation: highlight 1s ease-in-out;
-}
+    function displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate) {
+        const ctx = document.getElementById('payoffChart').getContext('2d');
+        const labels = [];
+        const balanceData = [];
+        let currentBalance = balance;
+        const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
 
-@keyframes highlight {
-    0% { background-color: #ffff99; }
-    100% { background-color: transparent; }
-}
+        for (let i = 0; i <= monthsToPay; i++) {
+            const currentDate = new Date(startDate);
+            currentDate.setMonth(currentDate.getMonth() + i);
+            const monthYear = currentDate.toLocaleString('default', { month: 'short', year: '2-digit' });
+            labels.push(monthYear);
+            balanceData.push(currentBalance);
+            currentBalance = Math.max(0, currentBalance - monthlyPayment + (currentBalance * monthlyInterestRate));
+        }
 
-/* Hide the share results button */
-#shareResults {
-    display: none;
-}
+        if (payoffChart) {
+            payoffChart.destroy();
+        }
 
-/* Balance Transfer Recommendation Styles */
-.recommendation-section {
-    background-color: #e6f7ff;
-    border: 1px solid #91d5ff;
-    border-radius: 5px;
-    padding: 20px;
-    margin-top: 20px;
-}
+        payoffChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Balance',
+                    data: balanceData,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Balance ($)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months'
+                        }
+                    }
+                }
+            }
+        });
+    }
 
-.recommendation-section h2 {
-    color: #0050b3;
-    margin-top: 0;
-}
+    function displayBalanceTransferRecommendation(balance, totalInterest) {
+        const recommendationDiv = document.getElementById('balanceTransferRecommendation');
+        recommendationDiv.innerHTML = ''; // Clear previous content
 
-.card-info {
-    background-color: #fff;
-    border: 1px solid #d9d9d9;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-}
+        const header = document.createElement('h2');
+        header.textContent = 'Balance Transfer Recommendation';
+        recommendationDiv.appendChild(header);
 
-.card-info h3 {
-    margin-top: 0;
-    color: #1890ff;
-}
+        const cardInfo = document.createElement('div');
+        cardInfo.className = 'card-info';
+        cardInfo.innerHTML = `
+            <h3>Citi® Diamond Preferred® Card</h3>
+            <p>0% Intro APR for 21 months on balance transfers and 0% Intro APR for 12 months on purchases</p>
+            <p>Annual Fee: $0</p>
+            <p>Credit Recommended: Good to Excellent (670-850)</p>
+        `;
+        recommendationDiv.appendChild(cardInfo);
 
-.savings-info {
-    text-align: center;
-}
+        const savings = calculateBalanceTransferSavings(balance, totalInterest);
+        const savingsInfo = document.createElement('div');
+        savingsInfo.className = 'savings-info';
+        savingsInfo.innerHTML = `
+            <p>By transferring your balance to this card, you could potentially save:</p>
+            <h3>$${Math.round(savings)} in interest</h3>
+            <p>This assumes you pay off the balance within the 21-month 0% APR period.</p>
+        `;
+        recommendationDiv.appendChild(savingsInfo);
 
-.savings-info h3 {
-    color: #52c41a;
-    font-size: 24px;
-}
+        const disclaimer = document.createElement('p');
+        disclaimer.className = 'disclaimer';
+        disclaimer.textContent = 'Note: Balance transfer fees may apply. Please review all terms and conditions before applying for a new credit card.';
+        recommendationDiv.appendChild(disclaimer);
 
-.disclaimer {
-    font-size: 12px;
-    color: #8c8c8c;
-    margin-top: 15px;
-}
+        recommendationDiv.style.display = 'block';
+    }
+
+    function calculateBalanceTransferSavings(balance, totalInterest) {
+        // Assuming a 3% balance transfer fee
+        const transferFee = balance * 0.03;
+        return Math.max(0, totalInterest - transferFee);
+    }
+});

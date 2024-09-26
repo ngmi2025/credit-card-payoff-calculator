@@ -160,11 +160,6 @@ tr:nth-child(even) {
     100% { background-color: transparent; }
 }
 
-/* Hide the share results button */
-#shareResults {
-    display: none;
-}
-
 /* Balance Transfer Recommendation Styles */
 #balanceTransferRecommendation {
     background-color: #ffffff;
@@ -173,7 +168,6 @@ tr:nth-child(even) {
     padding: 20px;
     margin-top: 30px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    order: 2;
 }
 
 #balanceTransferRecommendation h2 {
@@ -183,80 +177,11 @@ tr:nth-child(even) {
 }
 
 .card-info {
+    display: flex;
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     padding: 15px;
-    margin-bottom: 20px;
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.card-header h3 {
-    margin: 0;
-    color: #0077be;
-    font-size: 1.2em;
-}
-
-.rating {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.stars {
-    color: #ffa500;
-    font-size: 1.2em;
-}
-
-.rating-text {
-    font-size: 0.8em;
-    color: #666;
-}
-
-.card-description {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.card-details .detail-item {
-    margin-bottom: 10px;
-}
-
-.detail-label {
-    font-weight: bold;
-    color: #555;
-}
-
-.detail-value {
-    display: block;
-    margin-top: 2px;
-    color: #333;
-}
-
-.savings-info {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.savings-info h3 {
-    color: #4caf50;
-    font-size: 2em;
-    margin: 10px 0;
-}
-
-.disclaimer {
-    font-size: 0.9em;
-    color: #777;
-    font-style: italic;
-}
-
-/* Ensure Balance Transfer Recommendation is last */
-#paymentTable {
-    order: 1;
-}
+.card-image

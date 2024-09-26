@@ -14,6 +14,8 @@ body {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
 }
 
 h1, h2 {
@@ -164,43 +166,97 @@ tr:nth-child(even) {
 }
 
 /* Balance Transfer Recommendation Styles */
-.recommendation-section {
-    background-color: #e6f7ff;
-    border: 1px solid #91d5ff;
-    border-radius: 5px;
+#balanceTransferRecommendation {
+    background-color: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
     padding: 20px;
-    margin-top: 20px;
+    margin-top: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    order: 2;
 }
 
-.recommendation-section h2 {
-    color: #0050b3;
+#balanceTransferRecommendation h2 {
+    color: #333;
     margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .card-info {
-    background-color: #fff;
-    border: 1px solid #d9d9d9;
-    border-radius: 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     padding: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-.card-info h3 {
-    margin-top: 0;
-    color: #1890ff;
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.card-header h3 {
+    margin: 0;
+    color: #0077be;
+    font-size: 1.2em;
+}
+
+.rating {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.stars {
+    color: #ffa500;
+    font-size: 1.2em;
+}
+
+.rating-text {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.card-description {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.card-details .detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.detail-value {
+    display: block;
+    margin-top: 2px;
+    color: #333;
 }
 
 .savings-info {
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .savings-info h3 {
-    color: #52c41a;
-    font-size: 24px;
+    color: #4caf50;
+    font-size: 2em;
+    margin: 10px 0;
 }
 
 .disclaimer {
-    font-size: 12px;
-    color: #8c8c8c;
-    margin-top: 15px;
+    font-size: 0.9em;
+    color: #777;
+    font-style: italic;
+}
+
+/* Ensure Balance Transfer Recommendation is last */
+#paymentTable {
+    order: 1;
 }

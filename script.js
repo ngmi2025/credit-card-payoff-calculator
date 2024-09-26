@@ -66,12 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('Monthly Payment:', monthlyPayment, 'Months to Pay:', monthsToPay);
 
-        const totalInterest = monthlyPayment * monthsToPay - balance;
+        const totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
         const startDate = new Date();
         const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
 
         displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
-        displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, monthsToPay, totalInterest);
+        displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest);
     }
 
     function calculateMonthlyPayment(balance, monthlyInterestRate, months) {
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculateMonthsToPay(balance, monthlyInterestRate, payment) {
-        return Math.ceil(Math.log(payment / (payment - balance * monthlyInterestRate)) / Math.log(1 + monthlyInterestRate));
+        return Math.log(payment / (payment - balance * monthlyInterestRate)) / Math.log(1 + monthlyInterestRate);
     }
 
     function calculateTotalInterest(balance, monthlyPayment, months) {
@@ -99,23 +99,20 @@ document.addEventListener('DOMContentLoaded', function() {
         resultsDiv.style.display = 'block';
     }
 
-    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseMonthsToPay, baseTotalInterest) {
+    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseTotalInterest) {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
 
         for (let i = 1; i <= 5; i++) {
-            const extraPayment = baseMonthlyPayment * i * 0.1;
-            const monthlyPayment = baseMonthlyPayment + extraPayment;
-            let monthsToPay, totalInterest, interestSavings;
-
-            monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
-            totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
-            interestSavings = baseTotalInterest - totalInterest;
+            const monthlyPayment = baseMonthlyPayment + (baseMonthlyPayment * i * 0.1);
+            const monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
+            const totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
+            const interestSavings = baseTotalInterest - totalInterest;
 
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
             row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;
-            row.insertCell(2).textContent = monthsToPay;
+            row.insertCell(2).textContent = Math.ceil(monthsToPay);
         }
 
         paymentTableDiv.style.display = 'block';

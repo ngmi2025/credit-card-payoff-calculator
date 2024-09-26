@@ -1,152 +1,76 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('payoff-form');
+document.addEventListener('DOMContentLoaded', function() {
+    const introRateCheckbox = document.getElementById('introRate');
+    const introRateDetails = document.getElementById('introRateDetails');
+    const payoffGoalSelect = document.getElementById('payoffGoal');
+    const timeGoalDiv = document.getElementById('timeGoal');
+    const fixedPaymentDiv = document.getElementById('fixedPayment');
+    const calculateButton = document.getElementById('calculate');
     const resultsDiv = document.getElementById('results');
-    let payoffChart = null;
+    const paymentTableDiv = document.getElementById('paymentTable');
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        calculatePayoff();
+    introRateCheckbox.addEventListener('change', function() {
+        introRateDetails.style.display = this.checked ? 'block' : 'none';
     });
 
-    // Add event listeners for real-time calculations
-    ['balance', 'apr', 'minPayment', 'extraPayment', 'goalDate'].forEach(id => {
-        document.getElementById(id).addEventListener('input', calculatePayoff);
+    payoffGoalSelect.addEventListener('change', function() {
+        if (this.value === 'time') {
+            timeGoalDiv.style.display = 'block';
+            fixedPaymentDiv.style.display = 'none';
+        } else {
+            timeGoalDiv.style.display = 'none';
+            fixedPaymentDiv.style.display = 'block';
+        }
     });
+
+    calculateButton.addEventListener('click', calculatePayoff);
 
     function calculatePayoff() {
-        const balance = parseFloat(document.getElementById('balance').value) || 0;
-        const apr = (parseFloat(document.getElementById('apr').value) || 0) / 100 / 12; // Monthly interest rate
-        const minPayment = parseFloat(document.getElementById('minPayment').value) || 0;
-        const extraPayment = parseFloat(document.getElementById('extraPayment').value) || 0;
-        const goalDate = new Date(document.getElementById('goalDate').value);
+        const balance = parseFloat(document.getElementById('balance').value);
+        const interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+        const payoffGoal = document.getElementById('payoffGoal').value;
+        let monthlyPayment, monthsToPay;
 
-        if (balance > 0 && minPayment > 0) {
-            const scenarios = [
-                { name: 'Minimum Payment', payment: minPayment },
-                { name: 'Minimum + Extra', payment: minPayment + extraPayment }
-            ];
-
-            let scenarioResults = '';
-            let chartData = [];
-
-            scenarios.forEach(scenario => {
-                const result = calculateScenario(balance, apr, scenario.payment);
-                scenarioResults += `
-                    <div class="scenario">
-                        <h3>${scenario.name}</h3>
-                        <p>Time to pay off: ${result.months} months</p>
-                        <p>Total interest paid: $${result.totalInterest.toFixed(2)}</p>
-                        <p>Total amount paid: $${result.totalPaid.toFixed(2)}</p>
-                    </div>
-                `;
-                chartData.push({
-                    label: scenario.name,
-                    data: result.balanceData
-                });
-            });
-
-            document.getElementById('scenarioResults').innerHTML = scenarioResults;
-            updateChart(chartData);
-
-            // Calculate interest saved
-            const interestSaved = scenarios[0].totalInterest - scenarios[1].totalInterest;
-            document.getElementById('interestSaved').innerHTML = `
-                <h3>Interest Saved</h3>
-                <p>By making extra payments, you could save $${interestSaved.toFixed(2)} in interest!</p>
-            `;
-
-            // Goal setting feature
-            if (!isNaN(goalDate.getTime())) {
-                const monthsToGoal = Math.ceil((goalDate - new Date()) / (1000 * 60 * 60 * 24 * 30));
-                const requiredPayment = calculateRequiredPayment(balance, apr, monthsToGoal);
-                document.getElementById('goalResults').innerHTML = `
-                    <h3>Goal Payment</h3>
-                    <p>To pay off your balance by ${goalDate.toLocaleDateString()}, you need to pay $${requiredPayment.toFixed(2)} per month.</p>
-                `;
-            }
-
-            // Tips and educational content
-            document.getElementById('tips').innerHTML = `
-                <h3>Tips for Paying Off Credit Card Debt</h3>
-                <ul>
-                    <li>Always pay more than the minimum payment if possible.</li>
-                    <li>Consider transferring your balance to a card with a lower APR.</li>
-                    <li>Create a budget to allocate more money towards debt repayment.</li>
-                    <li><a href="https://upgradedpoints.com/credit-cards/how-to-pay-off-credit-card-debt/" target="_blank">Read more about paying off credit card debt</a></li>
-                </ul>
-            `;
-
-            resultsDiv.classList.remove('hidden');
-        }
-    }
-
-    function calculateScenario(balance, apr, payment) {
-        let months = 0;
-        let totalInterest = 0;
-        let remainingBalance = balance;
-        let totalPaid = 0;
-        const balanceData = [balance];
-
-        while (remainingBalance > 0) {
-            const interest = remainingBalance * apr;
-            totalInterest += interest;
-            remainingBalance += interest - payment;
-            totalPaid += payment;
-            months++;
-
-            if (remainingBalance > 0) {
-                balanceData.push(remainingBalance);
-            } else {
-                balanceData.push(0);
-                totalPaid += remainingBalance; // Add the final payment
-            }
+        if (payoffGoal === 'time') {
+            monthsToPay = parseInt(document.getElementById('monthsToPay').value);
+            monthlyPayment = (balance * interestRate * Math.pow(1 + interestRate, monthsToPay)) / (Math.pow(1 + interestRate, monthsToPay) - 1);
+        } else {
+            monthlyPayment = parseFloat(document.getElementById('fixedMonthlyPayment').value);
+            monthsToPay = Math.ceil(Math.log(monthlyPayment / (monthlyPayment - balance * interestRate)) / Math.log(1 + interestRate));
         }
 
-        return { months, totalInterest, totalPaid, balanceData };
+        const totalInterest = monthlyPayment * monthsToPay - balance;
+        const startDate = new Date();
+        const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
+
+        displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
+        displayPaymentTable(balance, interestRate, monthlyPayment, monthsToPay);
     }
 
-    function calculateRequiredPayment(balance, apr, months) {
-        return (balance * apr * Math.pow(1 + apr, months)) / (Math.pow(1 + apr, months) - 1);
+    function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
+        document.getElementById('monthlyPayment').textContent = monthlyPayment.toFixed(2);
+        document.getElementById('startDate').textContent = startDate.toLocaleDateString();
+        document.getElementById('payOffDate').textContent = payOffDate.toLocaleDateString();
+        document.getElementById('totalInterest').textContent = totalInterest.toFixed(2);
+        resultsDiv.style.display = 'block';
     }
 
-    function updateChart(datasets) {
-        const ctx = document.getElementById('payoffChart').getContext('2d');
-        
-        if (payoffChart) {
-            payoffChart.destroy();
+    function displayPaymentTable(balance, interestRate, baseMonthlyPayment, baseMonthsToPay) {
+        const tableBody = document.getElementById('paymentTableBody');
+        tableBody.innerHTML = '';
+
+        for (let i = 0; i <= 4; i++) {
+            const extraPayment = baseMonthlyPayment * i * 0.1;
+            const monthlyPayment = baseMonthlyPayment + extraPayment;
+            const monthsToPay = Math.ceil(Math.log(monthlyPayment / (monthlyPayment - balance * interestRate)) / Math.log(1 + interestRate));
+            const totalInterest = monthlyPayment * monthsToPay - balance;
+            const interestSavings = (baseMonthlyPayment * baseMonthsToPay - balance) - totalInterest;
+
+            const row = tableBody.insertRow();
+            row.insertCell(0).textContent = `$${monthlyPayment.toFixed(2)}`;
+            row.insertCell(1).textContent = `$${interestSavings.toFixed(2)}`;
+            row.insertCell(2).textContent = monthsToPay;
         }
 
-        payoffChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: Array.from({length: Math.max(...datasets.map(d => d.data.length))}, (_, i) => i),
-                datasets: datasets.map((dataset, index) => ({
-                    label: dataset.label,
-                    data: dataset.data,
-                    borderColor: index === 0 ? '#002f6c' : '#008cd2',
-                    backgroundColor: index === 0 ? 'rgba(0, 47, 108, 0.1)' : 'rgba(0, 140, 210, 0.1)',
-                    fill: true
-                }))
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Balance ($)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Months'
-                        }
-                    }
-                }
-            }
-        });
+        paymentTableDiv.style.display = 'block';
     }
 });

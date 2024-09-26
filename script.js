@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('monthlyPayment').textContent = `$${Math.round(monthlyPayment)}`;
         document.getElementById('startDate').textContent = formatDate(startDate);
         document.getElementById('payOffDate').textContent = formatDate(payOffDate);
-        document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest)}`;
+        document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest + 0.5)}`;
         resultsDiv.style.display = 'block';
     }
 
@@ -118,10 +118,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Interest savings should be recalculated based on the new total interest
             const interestSavings = baseTotalInterestRecalculated - newTotalInterest;
 
-            // Update the table
+            // Update the table with correct rounding
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
-            row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;
+            row.insertCell(1).textContent = `$${Math.round(interestSavings + 0.5)}`;
             row.insertCell(2).textContent = Math.round(monthsToPay);
         }
 

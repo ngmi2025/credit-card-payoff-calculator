@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
         displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
         displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
-        displayPayoffChart(balance, monthlyPayment, monthsToPay);
+        displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate);
 
         resultsDiv.classList.add('highlight');
         setTimeout(() => resultsDiv.classList.remove('highlight'), 1000);
@@ -88,7 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function formatDate(date) {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        return `${months[date.getMonth()]} ${date.getFullYear()}`;
+        const year = date.getFullYear().toString().slice(-2); // Get the last two digits of the year
+        return `${months[date.getMonth()]} ${year}`;
     }
 
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
@@ -135,20 +136,18 @@ document.addEventListener('DOMContentLoaded', function() {
         insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${Math.round(timeSavings)} months earlier.`;
     }
 
-    function displayPayoffChart(balance, monthlyPayment, monthsToPay) {
+    function displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate) {
         const ctx = document.getElementById('payoffChart').getContext('2d');
         const labels = [];
         const balanceData = [];
         let currentBalance = balance;
         const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
 
-        const startDate = new Date();
-
         for (let i = 0; i <= monthsToPay; i++) {
             const currentDate = new Date(startDate);
             currentDate.setMonth(currentDate.getMonth() + i);
-            const monthName = currentDate.toLocaleString('default', { month: 'short' });
-            labels.push(monthName);  // Updated to show actual months
+            const monthYear = currentDate.toLocaleString('default', { month: 'short', year: '2-digit' });
+            labels.push(monthYear);  // Updated to show actual months with the year (e.g., "Sep 24")
             balanceData.push(currentBalance);
             currentBalance = Math.max(0, currentBalance - monthlyPayment + (currentBalance * monthlyInterestRate));
         }

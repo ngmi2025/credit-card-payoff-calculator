@@ -21,22 +21,22 @@
             </div>
             <div class="input-group">
                 <label>Payoff Goal:</label>
-                <div class="radio-group">
-                    <input type="radio" id="timeGoal" name="payoffGoal" value="time" checked>
-                    <label for="timeGoal">Pay off within a certain time</label>
-                    <input type="radio" id="fixedPayment" name="payoffGoal" value="fixed">
-                    <label for="fixedPayment">Pay off with a fixed monthly payment</label>
+                <div class="button-group">
+                    <button id="timeGoal" class="goal-button selected">Pay off within a certain time</button>
+                    <button id="fixedPayment" class="goal-button">Pay off with a fixed monthly payment</button>
                 </div>
             </div>
-            <div id="timeGoalInput">
+            <div id="timeGoalInput" class="input-group">
                 <label for="monthsToPay">Months to pay off:</label>
                 <input type="number" id="monthsToPay" min="1" step="1">
             </div>
-            <div id="fixedPaymentInput" style="display: none;">
+            <div id="fixedPaymentInput" class="input-group" style="display: none;">
                 <label for="fixedMonthlyPayment">Fixed Monthly Payment ($):</label>
                 <input type="number" id="fixedMonthlyPayment" min="0" step="0.01">
             </div>
-            <button id="calculate">Calculate</button>
+            <div class="input-group">
+                <button id="calculate">Calculate</button>
+            </div>
         </div>
         <div id="results" style="display: none;">
             <h2>Results</h2>

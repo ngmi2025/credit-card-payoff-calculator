@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
         displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
         displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate);
+        displayBalanceTransferRecommendation(balance, totalInterest);
 
         resultsDiv.classList.add('highlight');
         setTimeout(() => resultsDiv.classList.remove('highlight'), 1000);
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function formatDate(date) {
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const year = date.getFullYear().toString().slice(-2); // Get the last two digits of the year
+        const year = date.getFullYear().toString().slice(-2);
         return `${months[date.getMonth()]} ${year}`;
     }
 
@@ -147,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentDate = new Date(startDate);
             currentDate.setMonth(currentDate.getMonth() + i);
             const monthYear = currentDate.toLocaleString('default', { month: 'short', year: '2-digit' });
-            labels.push(monthYear);  // Updated to show actual months with the year (e.g., "Sep 24")
+            labels.push(monthYear);
             balanceData.push(currentBalance);
             currentBalance = Math.max(0, currentBalance - monthlyPayment + (currentBalance * monthlyInterestRate));
         }
@@ -186,5 +187,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    }
+
+    function displayBalanceTransferRecommendation(balance, totalInterest) {
+        const recommendationDiv = document.getElementById('balanceTransferRecommendation');
+        recommendationDiv.innerHTML = ''; // Clear previous content
+
+        const header = document.createElement('h2');
+        header.textContent = 'Balance Transfer Recommendation';
+        recommendationDiv.appendChild(header);
+
+        const cardInfo = document.createElement('div');
+        cardInfo.className = 'card-info';
+        cardInfo.innerHTML = `
+            <h3>Citi® Diamond Preferred® Card</h3>
+            <p>0% Intro APR for 21 months on balance transfers and 0% Intro APR for 12 months on purchases</p>
+            <p>Annual Fee: $0</p>
+            <p>Credit Recommended: Good to Excellent (670-850)</p>
+        `;
+        recommendationDiv.appendChild(cardInfo);
+
+        const savings = calculateBalanceTransferSavings(balance, totalInterest);
+        const savingsInfo = document.createElement('div');
+        savingsInfo.className = 'savings-info';
+        savingsInfo.innerHTML = `
+            <p>By transferring your balance to this card, you could potentially save:</p>
+            <h3>$${Math.round(savings)} in interest</h3>
+            <p>This assumes you pay off the balance within the 21-month 0% APR period.</p>
+        `;
+        recommendationDiv.appendChild(savingsInfo);
+
+        const disclaimer = document.createElement('p');
+        disclaimer.className = 'disclaimer';
+        disclaimer.textContent = 'Note: Balance transfer fees may apply. Please review all terms and conditions before applying for a new credit card.';
+        recommendationDiv.appendChild(disclaimer);
+
+        recommendationDiv.style.display = 'block';
+    }
+
+    function calculateBalanceTransferSavings(balance, totalInterest) {
+        // Assuming a 3% balance transfer fee
+        const transferFee = balance * 0.03;
+        return Math.max(0, totalInterest - transferFee);
     }
 });

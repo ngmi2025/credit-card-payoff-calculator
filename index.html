@@ -57,10 +57,24 @@
         <button id="calculate">Calculate</button>
         <div id="results" style="display: none;">
             <h2>Results</h2>
-            <p>Monthly Payment: $<span id="monthlyPayment"></span></p>
-            <p>Start Date: <span id="startDate"></span></p>
-            <p>Pay Off Date: <span id="payOffDate"></span></p>
-            <p>Total Interest: $<span id="totalInterest"></span></p>
+            <div class="results-grid">
+                <div class="result-item">
+                    <span class="result-label">Monthly Payment:</span>
+                    <span class="result-value" id="monthlyPayment"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Start Date:</span>
+                    <span class="result-value" id="startDate"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Pay Off Date:</span>
+                    <span class="result-value" id="payOffDate"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Total Interest:</span>
+                    <span class="result-value" id="totalInterest"></span>
+                </div>
+            </div>
         </div>
         <div id="paymentTable" style="display: none;">
             <h2>Payment Comparison</h2>

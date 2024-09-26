@@ -73,17 +73,17 @@ document.addEventListener('DOMContentLoaded', function() {
         displayPaymentTable(balance, interestRate, monthlyPayment, monthsToPay, totalInterest);
     }
 
-    function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
-        document.getElementById('monthlyPayment').textContent = Math.round(monthlyPayment);
-        document.getElementById('startDate').textContent = formatDate(startDate);
-        document.getElementById('payOffDate').textContent = formatDate(payOffDate);
-        document.getElementById('totalInterest').textContent = Math.round(totalInterest);
-        resultsDiv.style.display = 'block';
+    function formatDate(date) {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        return `${months[date.getMonth()]} ${date.getFullYear()}`;
     }
 
-    function formatDate(date) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return `${months[date.getMonth()]} ${date.getFullYear()}`;
+    function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
+        document.getElementById('monthlyPayment').textContent = `$${Math.round(monthlyPayment)}`;
+        document.getElementById('startDate').textContent = formatDate(startDate);
+        document.getElementById('payOffDate').textContent = formatDate(payOffDate);
+        document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest)}`;
+        resultsDiv.style.display = 'block';
     }
 
     function displayPaymentTable(balance, interestRate, baseMonthlyPayment, baseMonthsToPay, baseTotalInterest) {

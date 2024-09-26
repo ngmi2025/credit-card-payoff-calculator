@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const payoffGoalRadios = document.getElementsByName('payoffGoal');
+    const timeGoalButton = document.getElementById('timeGoal');
+    const fixedPaymentButton = document.getElementById('fixedPayment');
     const timeGoalInput = document.getElementById('timeGoalInput');
     const fixedPaymentInput = document.getElementById('fixedPaymentInput');
     const calculateButton = document.getElementById('calculate');
@@ -8,17 +9,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const shareResultsButton = document.getElementById('shareResults');
     let payoffChart;
 
-    payoffGoalRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.value === 'time') {
-                timeGoalInput.style.display = 'block';
-                fixedPaymentInput.style.display = 'none';
-            } else {
-                timeGoalInput.style.display = 'none';
-                fixedPaymentInput.style.display = 'block';
-            }
-        });
-    });
+    function toggleGoalSelection(selectedButton, otherButton) {
+        selectedButton.classList.add('selected');
+        otherButton.classList.remove('selected');
+        if (selectedButton === timeGoalButton) {
+            timeGoalInput.style.display = 'block';
+            fixedPaymentInput.style.display = 'none';
+        } else {
+            timeGoalInput.style.display = 'none';
+            fixedPaymentInput.style.display = 'block';
+        }
+    }
+
+    timeGoalButton.addEventListener('click', () => toggleGoalSelection(timeGoalButton, fixedPaymentButton));
+    fixedPaymentButton.addEventListener('click', () => toggleGoalSelection(fixedPaymentButton, timeGoalButton));
 
     calculateButton.addEventListener('click', function(event) {
         event.preventDefault();
@@ -39,14 +43,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const balance = parseFloat(document.getElementById('balance').value);
         const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
         const monthlyInterestRate = annualInterestRate / 12;
-        const payoffGoal = document.querySelector('input[name="payoffGoal"]:checked').value;
+        const payoffGoal = document.querySelector('.goal-button.selected').id;
         let monthlyPayment, monthsToPay;
 
         if (isNaN(balance) || isNaN(annualInterestRate) || balance <= 0 || annualInterestRate < 0) {
             throw new Error('Invalid balance or interest rate');
         }
 
-        if (payoffGoal === 'time') {
+        if (payoffGoal === 'timeGoal') {
             monthsToPay = parseInt(document.getElementById('monthsToPay').value);
             if (isNaN(monthsToPay) || monthsToPay <= 0) {
                 throw new Error('Invalid months to pay');
@@ -127,6 +131,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function displayActionableInsight(monthlyPayment, totalInterest, monthsToPay) {
         const increasedPayment = monthlyPayment * 1.2;
+        const balance = parseFloat(document.getElementById('balance').value);
+        const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+        const monthlyInterestRate = annualInterestRate / 12;
         const newMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, increasedPayment);
         const newTotalInterest = calculateTotalInterest(balance, increasedPayment, newMonthsToPay);
         const interestSavings = totalInterest - newTotalInterest;
@@ -141,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const labels = [];
         const balanceData = [];
         let currentBalance = balance;
+        const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
 
         for (let i = 0; i <= monthsToPay; i++) {
             labels.push(`Month ${i}`);

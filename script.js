@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     calculateButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent form submission if it's in a form
+        event.preventDefault();
         console.log('Calculate button clicked');
         try {
             calculatePayoff();
@@ -74,18 +74,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
-        document.getElementById('monthlyPayment').textContent = monthlyPayment.toFixed(2);
-        document.getElementById('startDate').textContent = startDate.toLocaleDateString();
-        document.getElementById('payOffDate').textContent = payOffDate.toLocaleDateString();
-        document.getElementById('totalInterest').textContent = totalInterest.toFixed(2);
+        document.getElementById('monthlyPayment').textContent = Math.round(monthlyPayment);
+        document.getElementById('startDate').textContent = formatDate(startDate);
+        document.getElementById('payOffDate').textContent = formatDate(payOffDate);
+        document.getElementById('totalInterest').textContent = Math.round(totalInterest);
         resultsDiv.style.display = 'block';
+    }
+
+    function formatDate(date) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[date.getMonth()]} ${date.getFullYear()}`;
     }
 
     function displayPaymentTable(balance, interestRate, baseMonthlyPayment, baseMonthsToPay, baseTotalInterest) {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
 
-        for (let i = 0; i <= 4; i++) {
+        for (let i = 1; i <= 5; i++) {
             const extraPayment = baseMonthlyPayment * i * 0.1;
             const monthlyPayment = baseMonthlyPayment + extraPayment;
             let monthsToPay, totalInterest, interestSavings;
@@ -101,8 +106,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const row = tableBody.insertRow();
-            row.insertCell(0).textContent = `$${monthlyPayment.toFixed(2)}`;
-            row.insertCell(1).textContent = interestSavings === 'N/A' ? 'N/A' : `$${interestSavings.toFixed(2)}`;
+            row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
+            row.insertCell(1).textContent = interestSavings === 'N/A' ? 'N/A' : `$${Math.round(interestSavings)}`;
             row.insertCell(2).textContent = monthsToPay === 'Never' ? 'Never' : monthsToPay;
         }
 

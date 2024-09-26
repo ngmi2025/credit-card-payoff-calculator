@@ -36,13 +36,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculatePayoff() {
         console.log('Starting calculatePayoff function');
         const balance = parseFloat(document.getElementById('balance').value);
-        const interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+        const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+        const monthlyInterestRate = annualInterestRate / 12;
         const payoffGoal = document.getElementById('payoffGoal').value;
         let monthlyPayment, monthsToPay;
 
-        console.log('Balance:', balance, 'Interest Rate:', interestRate, 'Payoff Goal:', payoffGoal);
+        console.log('Balance:', balance, 'Annual Interest Rate:', annualInterestRate, 'Payoff Goal:', payoffGoal);
 
-        if (isNaN(balance) || isNaN(interestRate) || balance <= 0 || interestRate < 0) {
+        if (isNaN(balance) || isNaN(annualInterestRate) || balance <= 0 || annualInterestRate < 0) {
             throw new Error('Invalid balance or interest rate');
         }
 
@@ -51,16 +52,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isNaN(monthsToPay) || monthsToPay <= 0) {
                 throw new Error('Invalid months to pay');
             }
-            monthlyPayment = (balance * interestRate * Math.pow(1 + interestRate, monthsToPay)) / (Math.pow(1 + interestRate, monthsToPay) - 1);
+            monthlyPayment = calculateMonthlyPayment(balance, monthlyInterestRate, monthsToPay);
         } else {
             monthlyPayment = parseFloat(document.getElementById('fixedMonthlyPayment').value);
             if (isNaN(monthlyPayment) || monthlyPayment <= 0) {
                 throw new Error('Invalid fixed monthly payment');
             }
-            if (monthlyPayment <= balance * interestRate) {
+            if (monthlyPayment <= balance * monthlyInterestRate) {
                 throw new Error('Monthly payment is too low to pay off the balance');
             }
-            monthsToPay = Math.ceil(Math.log(monthlyPayment / (monthlyPayment - balance * interestRate)) / Math.log(1 + interestRate));
+            monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
         }
 
         console.log('Monthly Payment:', monthlyPayment, 'Months to Pay:', monthsToPay);
@@ -70,7 +71,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
 
         displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
-        displayPaymentTable(balance, interestRate, monthlyPayment, monthsToPay, totalInterest);
+        displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, monthsToPay, totalInterest);
+    }
+
+    function calculateMonthlyPayment(balance, monthlyInterestRate, months) {
+        return (balance * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, months)) / (Math.pow(1 + monthlyInterestRate, months) - 1);
+    }
+
+    function calculateMonthsToPay(balance, monthlyInterestRate, payment) {
+        return Math.ceil(Math.log(payment / (payment - balance * monthlyInterestRate)) / Math.log(1 + monthlyInterestRate));
+    }
+
+    function calculateTotalInterest(balance, monthlyPayment, months) {
+        return monthlyPayment * months - balance;
     }
 
     function formatDate(date) {
@@ -86,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resultsDiv.style.display = 'block';
     }
 
-    function displayPaymentTable(balance, interestRate, baseMonthlyPayment, baseMonthsToPay, baseTotalInterest) {
+    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseMonthsToPay, baseTotalInterest) {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
 
@@ -95,20 +108,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const monthlyPayment = baseMonthlyPayment + extraPayment;
             let monthsToPay, totalInterest, interestSavings;
 
-            if (monthlyPayment <= balance * interestRate) {
-                monthsToPay = 'Never';
-                totalInterest = 'N/A';
-                interestSavings = 'N/A';
-            } else {
-                monthsToPay = Math.ceil(Math.log(monthlyPayment / (monthlyPayment - balance * interestRate)) / Math.log(1 + interestRate));
-                totalInterest = monthlyPayment * monthsToPay - balance;
-                interestSavings = baseTotalInterest - totalInterest;
-            }
+            monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
+            totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
+            interestSavings = baseTotalInterest - totalInterest;
 
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
-            row.insertCell(1).textContent = interestSavings === 'N/A' ? 'N/A' : `$${Math.round(interestSavings)}`;
-            row.insertCell(2).textContent = monthsToPay === 'Never' ? 'Never' : monthsToPay;
+            row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;
+            row.insertCell(2).textContent = monthsToPay;
         }
 
         paymentTableDiv.style.display = 'block';

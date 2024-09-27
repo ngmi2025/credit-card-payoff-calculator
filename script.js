@@ -55,8 +55,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isNaN(monthlyPayment) || monthlyPayment <= 0) {
                 throw new Error('Invalid fixed monthly payment');
             }
-            if (monthlyPayment <= balance * monthlyInterestRate) {
-                alert('The monthly payment is too low to pay off the balance. It will take an infinite amount of time.');
+            const minimumPayment = balance * monthlyInterestRate;
+            if (monthlyPayment <= minimumPayment) {
+                const minimumPaymentSuggestion = (minimumPayment + 1).toFixed(2);
+                alert(`The monthly payment of $${monthlyPayment.toFixed(2)} is too low to pay off the balance. It needs to be greater than $${minimumPaymentSuggestion} to make progress on paying off the debt.`);
                 return;
             }
             monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
@@ -189,14 +191,4 @@ document.addEventListener('DOMContentLoaded', function() {
         const potentialSavings = document.getElementById('potentialSavings');
         
         const savings = calculateBalanceTransferSavings(balance, totalInterest);
-        potentialSavings.textContent = `$${Math.round(savings)}`;
-
-        recommendationDiv.style.display = 'block';
-    }
-
-    function calculateBalanceTransferSavings(balance, totalInterest) {
-        // Assuming a 3% balance transfer fee
-        const transferFee = balance * 0.03;
-        return Math.max(0, totalInterest - transferFee);
-    }
-});
+        potentialSavings.textContent = `

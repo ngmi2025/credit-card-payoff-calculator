@@ -1,299 +1,115 @@
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-}
-
-.calculator-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2 {
-    color: #333;
-    text-align: center;
-}
-
-.input-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-input[type="number"],
-input[type="text"],
-select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-}
-
-/* Button styles */
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-/* Goal buttons */
-.goal-button {
-    width: 48%;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    background-color: #808080;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    margin-right: 10px;
-    font-size: 16px;
-}
-
-.goal-button.selected {
-    background-color: #F6941F;
-    color: white;
-}
-
-.goal-button:hover {
-    background-color: #F6941F;
-    opacity: 0.8;
-}
-
-/* Results section */
-#results {
-    background-color: #e9ecef;
-    padding: 20px;
-    border-radius: 5px;
-    margin-top: 20px;
-    display: none;
-}
-
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.result-item {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.result-label {
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 5px;
-}
-
-.result-value {
-    font-size: 1.2em;
-    color: #007bff;
-}
-
-/* Payment table styles */
-#paymentTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-#paymentTable th, #paymentTable td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-}
-
-#paymentTable th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-#paymentTable tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-#paymentTable tr:hover {
-    background-color: #f5f5f5;
-}
-
-/* Make the payment table full width */
-#paymentTableDiv {
-    width: 100%;
-    overflow-x: auto;
-}
-
-/* Highlight animation */
-@keyframes highlightFade {
-    0% { background-color: #fff3cd; }
-    100% { background-color: transparent; }
-}
-
-.highlight {
-    animation: highlightFade 1s ease-in-out;
-}
-
-/* Actionable Insight */
-#actionableInsight {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    border-radius: 4px;
-    padding: 15px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-/* Balance Transfer Recommendation */
-#balanceTransferRecommendation {
-    background-color: #e6f7ff;
-    border: 1px solid #91d5ff;
-    padding: 20px;
-    border-radius: 5px;
-    margin-top: 20px;
-    display: none;
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.card-image-column {
-    flex: 0 0 80px;
-    margin-right: 20px;
-}
-
-.card-image {
-    width: 100%;
-    height: auto;
-}
-
-.card-title-column {
-    flex: 1;
-}
-
-.card-title {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin: 0;
-}
-
-.savings-details {
-    background-color: #f0f8ff;
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.detail-label {
-    font-weight: bold;
-    color: #555;
-    display: inline-block;
-    margin-right: 5px;
-}
-
-.detail-value {
-    color: #333;
-}
-
-.savings-callout {
-    background-color: #e6f7ff;
-    border: 1px solid #91d5ff;
-    border-radius: 4px;
-    padding: 15px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.savings-callout p {
-    margin: 0;
-    color: #0050b3;
-}
-
-.savings-callout h3 {
-    color: #52c41a;
-    font-size: 24px;
-    margin: 10px 0 0;
-}
-
-.button-group {
-    display: flex;
-    gap: 10px;
-}
-
-.apply-button, .learn-more-button {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.apply-button {
-    background-color: #3EB564;
-    color: white;
-}
-
-.learn-more-button {
-    background-color: #e0e0e0;
-    color: #333;
-}
-
-.apply-button:hover, .learn-more-button:hover {
-    opacity: 0.9;
-}
-
-@media (max-width: 768px) {
-    .card-header {
-        flex-direction: column;
-    }
-
-    .card-image-column {
-        max-width: 80%;
-        margin: 0 auto 15px;
-    }
-
-    .card-title-column {
-        text-align: center;
-    }
-
-    .results-grid {
-        grid-template-columns: 1fr;
-    }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Payoff Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>Credit Card Payoff Calculator</h1>
+        <div class="input-section">
+            <div class="input-group">
+                <label for="balance">Balance ($):</label>
+                <input type="number" id="balance" min="0" step="0.01" required>
+            </div>
+            <div class="input-group">
+                <label for="interestRate">Interest Rate (%):</label>
+                <input type="number" id="interestRate" min="0" max="100" step="0.01" required>
+            </div>
+            <div class="input-group">
+                <label>Payoff Goal:</label>
+                <div class="button-group">
+                    <button id="timeGoal" class="goal-button selected">Pay off within a certain time</button>
+                    <button id="fixedPayment" class="goal-button">Pay off with a fixed monthly payment</button>
+                </div>
+            </div>
+            <div id="timeGoalInput" class="input-group">
+                <label for="monthsToPay">Months to pay off:</label>
+                <input type="number" id="monthsToPay" min="1" step="1">
+            </div>
+            <div id="fixedPaymentInput" class="input-group" style="display: none;">
+                <label for="fixedMonthlyPayment">Fixed Monthly Payment ($):</label>
+                <input type="number" id="fixedMonthlyPayment" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <button id="calculate">Calculate</button>
+            </div>
+        </div>
+        <div id="results" style="display: none;">
+            <h2>Results</h2>
+            <div class="results-grid">
+                <div class="result-item">
+                    <span class="result-label">Monthly Payment:</span>
+                    <span class="result-value" id="monthlyPayment"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Start Date:</span>
+                    <span class="result-value" id="startDate"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Pay Off Date:</span>
+                    <span class="result-value" id="payOffDate"></span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Total Interest:</span>
+                    <span class="result-value" id="totalInterest"></span>
+                </div>
+            </div>
+            <div id="actionableInsight"></div>
+            <canvas id="payoffChart"></canvas>
+        </div>
+        <div id="paymentTable" style="display: none;">
+            <h2>Payment Comparison</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Monthly Payment</th>
+                        <th>Total Interest Savings</th>
+                        <th>Months to Pay Off</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentTableBody">
+                </tbody>
+            </table>
+        </div>
+        <div id="balanceTransferRecommendation" style="display: none;">
+            <h2>Balance Transfer Recommendation</h2>
+            <div class="card-info">
+                <div class="card-image-column">
+                    <img src="https://upgradedpoints.com/wp-content/uploads/2020/11/a36d32c0-309f-11ee-88ac-8d33dad17a11.webp" alt="Citi Diamond Preferred Card" class="card-image">
+                </div>
+                <div class="card-details-column">
+                    <h3>Citi® Diamond Preferred® Card</h3>
+                    <p class="card-description">This card has no annual fee with its strongest point being its introductory APR period on purchases and balance transfers.</p>
+                    <div class="card-details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Annual Fee</span>
+                            <span class="detail-value">$0</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">APR</span>
+                            <span class="detail-value">0% Intro APR for 21 months on balance transfers and 0% Intro APR for 12 months on purchases. After that the variable APR will be 18.24% - 28.99%. Note that 0% intro APR is on purchases starting from date of account opening.</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Credit Recommended</span>
+                            <span class="detail-value">Good to Excellent (670-850)</span>
+                        </div>
+                    </div>
+                    <div class="savings-callout">
+                        <p>Switching to this card will save you</p>
+                        <h3 id="potentialSavings">$0</h3>
+                    </div>
+                    <div class="button-group">
+                        <a href="https://www.citi.com/credit-cards/citi-diamond-preferred-credit-card" target="_blank" class="apply-button">Apply Now</a>
+                        <a href="https://upgradedpoints.com/credit-cards/reviews/citi-diamond-preferred-card/" target="_blank" class="learn-more-button">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

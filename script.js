@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const minimumPayment = balance * monthlyInterestRate;
             if (monthlyPayment <= minimumPayment) {
                 const minimumPaymentSuggestion = (minimumPayment + 1).toFixed(2);
-                alert(`The monthly payment of $${monthlyPayment.toFixed(2)} is too low to pay off the balance. It needs to be greater than $${minimumPaymentSuggestion} to make progress on paying off the debt.`);
+                alert(`The monthly payment of $${monthlyPayment.toFixed(2)} is too low to pay off the balance. It needs to be at least $${minimumPaymentSuggestion} to cover the monthly interest and make progress on the principal. At your current payment rate, the balance will continue to grow due to accruing interest.`);
                 return;
             }
             monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
@@ -191,4 +191,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const potentialSavings = document.getElementById('potentialSavings');
         
         const savings = calculateBalanceTransferSavings(balance, totalInterest);
-        potentialSavings.textContent = `
+        potentialSavings.textContent = `$${Math.round(savings)}`;
+
+        recommendationDiv.style.display = 'block';
+    }
+
+    function calculateBalanceTransferSavings(balance, totalInterest) {
+        // Assuming a 3% balance transfer fee and 21 months of 0% APR
+        const transferFee = balance * 0.03;
+        const currentMonthlyPayment = parseFloat(document.getElementById('fixedMonthlyPayment').value) || 
+                                      (balance / parseFloat(document.getElementById('monthsToPay').value));
+        const monthsAtZeroAPR = 21;
+        const remainingBalance = Math.max(0, balance - (currentMonthlyPayment * monthsAtZeroAPR));
+        const remainingMonths = Math.ceil(remainingBalance / currentMonthlyPayment);
+        const remainingInterest = calculateTotalInterest(remainingBalance, currentMonthlyPayment, remainingMonths);
+
+        return Math.max(0, totalInterest - transferFee - remainingInterest);
+    }
+});

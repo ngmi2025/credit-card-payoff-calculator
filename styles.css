@@ -152,7 +152,6 @@ tr:nth-child(even) {
 
 /* Balance Transfer Recommendation */
 #balanceTransferRecommendation {
-    margin-top: 30px;
     background-color: #ffffff;
     border: 1px solid #e8e8e8;
     border-radius: 8px;
@@ -176,13 +175,13 @@ tr:nth-child(even) {
 .card-header {
     display: flex;
     margin-bottom: 15px;
-    flex-direction: row-reverse;
+    align-items: flex-start;
 }
 
 .card-image-column {
     flex: 1;
     max-width: 25%;
-    padding-left: 15px;
+    margin-right: 20px;
 }
 
 .card-image {
@@ -193,7 +192,6 @@ tr:nth-child(even) {
 
 .card-title-column {
     flex: 3;
-    padding-right: 15px;
 }
 
 .card-title-column h3 {
@@ -290,9 +288,8 @@ tr:nth-child(even) {
 
     .card-image-column {
         max-width: 100%;
-        padding-left: 0;
-        margin-top: 15px;
-        order: 2;
+        margin-right: 0;
+        margin-bottom: 15px;
     }
 
     .card-image {
@@ -303,7 +300,5 @@ tr:nth-child(even) {
 
     .card-title-column {
         text-align: left;
-        order: 1;
-        padding-right: 0;
     }
 }

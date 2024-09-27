@@ -102,10 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
-        document.getElementById('monthlyPayment').innerHTML = `Monthly Payment:<br>$${Math.round(monthlyPayment)}`;
-        document.getElementById('startDate').innerHTML = `Start Date:<br>${startDate.toLocaleString('default', { month: 'short', year: 'numeric' })}`;
-        document.getElementById('payOffDate').innerHTML = `Pay Off Date:<br>${payOffDate.toLocaleString('default', { month: 'short', year: 'numeric' })}`;
-        document.getElementById('totalInterest').innerHTML = `Total Interest:<br>$${Math.round(totalInterest)}`;
+        document.getElementById('monthlyPayment').innerHTML = `<span class="result-label">Monthly Payment:</span><br><span class="result-value">$${Math.round(monthlyPayment)}</span>`;
+        document.getElementById('startDate').innerHTML = `<span class="result-label">Start Date:</span><br><span class="result-value">${startDate.toLocaleString('default', { month: 'short', year: 'numeric' })}</span>`;
+        document.getElementById('payOffDate').innerHTML = `<span class="result-label">Pay Off Date:</span><br><span class="result-value">${payOffDate.toLocaleString('default', { month: 'short', year: 'numeric' })}</span>`;
+        document.getElementById('totalInterest').innerHTML = `<span class="result-label">Total Interest:</span><br><span class="result-value">$${Math.round(totalInterest)}</span>`;
         resultsDiv.style.display = 'block';
     }
 
@@ -189,12 +189,37 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
                             text: 'Balance ($)'
+                        },
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumSignificantDigits: 3 }).format(value);
+                            }
                         }
                     },
                     x: {

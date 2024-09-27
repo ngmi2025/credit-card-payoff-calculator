@@ -148,6 +148,12 @@ button:hover {
     background-color: #f5f5f5;
 }
 
+/* Make the payment table full width */
+#paymentTableDiv {
+    width: 100%;
+    overflow-x: auto;
+}
+
 /* Highlight animation */
 @keyframes highlightFade {
     0% { background-color: #fff3cd; }

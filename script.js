@@ -43,33 +43,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 const minPayment = error.minPayment;
                 alert(`The monthly payment you entered is too low to pay off the balance. You need to pay at least $${minPayment.toFixed(2)} per month to cover the interest and start paying down the principal.`);
             } else {
-                alert('An error occurred while calculating. Please check your inputs and try again.');
+                alert(error.message || 'An error occurred while calculating. Please check your inputs and try again.');
             }
         }
     });
 
+    function validateInput(value, min, max, errorMessage) {
+        const num = parseFloat(value);
+        if (isNaN(num) || num < min || num > max) {
+            throw new Error(errorMessage);
+        }
+        return num;
+    }
+
     function calculatePayoff() {
-        const balance = parseFloat(document.getElementById('balance').value);
-        const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+        const balance = validateInput(document.getElementById('balance').value, 0, 1000000, 'Invalid balance. Please enter a number between 0 and 1,000,000.');
+        const annualInterestRate = validateInput(document.getElementById('interestRate').value, 0, 100, 'Invalid interest rate. Please enter a number between 0 and 100.') / 100;
         const monthlyInterestRate = annualInterestRate / 12;
         const payoffGoal = document.querySelector('.goal-button.selected').id;
         let monthlyPayment, monthsToPay;
 
-        if (isNaN(balance) || isNaN(annualInterestRate) || balance <= 0 || annualInterestRate < 0) {
-            throw new Error('Invalid balance or interest rate');
-        }
-
         if (payoffGoal === 'timeGoal') {
-            monthsToPay = parseInt(document.getElementById('monthsToPay').value);
-            if (isNaN(monthsToPay) || monthsToPay <= 0) {
-                throw new Error('Invalid months to pay');
-            }
+            monthsToPay = validateInput(document.getElementById('monthsToPay').value, 1, 360, 'Invalid months to pay. Please enter a number between 1 and 360.');
             monthlyPayment = calculateMonthlyPayment(balance, monthlyInterestRate, monthsToPay);
         } else {
-            monthlyPayment = parseFloat(document.getElementById('fixedMonthlyPayment').value);
-            if (isNaN(monthlyPayment) || monthlyPayment <= 0) {
-                throw new Error('Invalid fixed monthly payment');
-            }
+            monthlyPayment = validateInput(document.getElementById('fixedMonthlyPayment').value, 0, balance, 'Invalid fixed monthly payment. Please enter a number between 0 and the balance amount.');
             const minPayment = balance * monthlyInterestRate + 1; // $1 more than interest to pay some principal
             if (monthlyPayment <= balance * monthlyInterestRate) {
                 const error = new Error('Monthly payment is too low to pay off the balance');

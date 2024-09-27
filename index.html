@@ -1,90 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Credit Card Payoff Calculator</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ... (head content remains the same) ... -->
 </head>
 <body>
     <div class="calculator-container">
-        <h1>Credit Card Payoff Calculator</h1>
-        <div class="input-section">
-            <div class="input-group">
-                <label for="balance">Balance ($):</label>
-                <input type="number" id="balance" min="0" step="0.01" required>
-            </div>
-            <div class="input-group">
-                <label for="interestRate">Interest Rate (%):</label>
-                <input type="number" id="interestRate" min="0" max="100" step="0.01" required>
-            </div>
-            <div class="input-group">
-                <label>Payoff Goal:</label>
-                <div class="button-group">
-                    <button id="timeGoal" class="goal-button selected">Pay off within a certain time</button>
-                    <button id="fixedPayment" class="goal-button">Pay off with a fixed monthly payment</button>
-                </div>
-            </div>
-            <div id="timeGoalInput" class="input-group">
-                <label for="monthsToPay">Months to pay off:</label>
-                <input type="number" id="monthsToPay" min="1" step="1">
-            </div>
-            <div id="fixedPaymentInput" class="input-group" style="display: none;">
-                <label for="fixedMonthlyPayment">Fixed Monthly Payment ($):</label>
-                <input type="number" id="fixedMonthlyPayment" min="0" step="0.01">
-            </div>
-            <div class="input-group">
-                <button id="calculate">Calculate</button>
-            </div>
-        </div>
-        <div id="results" style="display: none;">
-            <h2>Results</h2>
-            <div class="results-grid">
-                <div class="result-item">
-                    <span class="result-label">Monthly Payment:</span>
-                    <span class="result-value" id="monthlyPayment"></span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Start Date:</span>
-                    <span class="result-value" id="startDate"></span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Pay Off Date:</span>
-                    <span class="result-value" id="payOffDate"></span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Total Interest:</span>
-                    <span class="result-value" id="totalInterest"></span>
-                </div>
-            </div>
-            <div id="actionableInsight"></div>
-            <canvas id="payoffChart"></canvas>
-        </div>
-        <div id="paymentTable" style="display: none;">
-            <h2>Payment Comparison</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Monthly Payment</th>
-                        <th>Total Interest Savings</th>
-                        <th>Months to Pay Off</th>
-                    </tr>
-                </thead>
-                <tbody id="paymentTableBody">
-                </tbody>
-            </table>
-        </div>
+        <!-- ... (previous content remains the same) ... -->
         <div id="balanceTransferRecommendation" style="display: none;">
             <h2>Balance Transfer Recommendation</h2>
             <div class="card-info">
                 <div class="card-header">
-                    <div class="card-image-column">
-                        <img src="https://upgradedpoints.com/wp-content/uploads/2020/11/a36d32c0-309f-11ee-88ac-8d33dad17a11.webp" alt="Citi Diamond Preferred Card" class="card-image">
-                    </div>
                     <div class="card-title-column">
                         <h3>Citi® Diamond Preferred® Card</h3>
                         <p class="card-description">This card has no annual fee with its strongest point being its introductory APR period on purchases and balance transfers.</p>
+                    </div>
+                    <div class="card-image-column">
+                        <img src="https://upgradedpoints.com/wp-content/uploads/2020/11/a36d32c0-309f-11ee-88ac-8d33dad17a11.webp" alt="Citi Diamond Preferred Card" class="card-image">
                     </div>
                 </div>
                 <div class="card-details-column">

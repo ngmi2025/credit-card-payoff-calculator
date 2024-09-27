@@ -191,7 +191,7 @@ tr:nth-child(even) {
 .card-image-column {
     flex: 1;
     max-width: 25%;
-    padding-right: 15px;
+    padding-left: 15px;
 }
 
 .card-image {
@@ -298,8 +298,9 @@ tr:nth-child(even) {
 
     .card-image-column {
         max-width: 100%;
-        padding-right: 0;
-        margin-bottom: 15px;
+        padding-left: 0;
+        margin-top: 15px;
+        order: 2;
     }
 
     .card-image {
@@ -309,6 +310,7 @@ tr:nth-child(even) {
     }
 
     .card-title-column {
-        text-align: center;
+        text-align: left;
+        order: 1;
     }
 }

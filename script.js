@@ -8,14 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentTableDiv = document.getElementById('paymentTable');
     let payoffChart;
 
-    // New function to handle input focus
     function handleInputFocus(event) {
-        if (window.innerWidth <= 768) { // Check if it's a mobile device
+        if (window.innerWidth <= 768) {
             window.scrollTo(0, event.target.offsetTop - 20);
         }
     }
 
-    // Add event listeners for input focus
     document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
         input.addEventListener('focus', handleInputFocus);
     });
@@ -41,7 +39,12 @@ document.addEventListener('DOMContentLoaded', function() {
             calculatePayoff();
         } catch (error) {
             console.error('Error in calculatePayoff:', error);
-            alert('An error occurred while calculating. Please check your inputs and try again.');
+            if (error.message.includes('Monthly payment is too low')) {
+                const minPayment = error.minPayment;
+                alert(`The monthly payment you entered is too low to pay off the balance. You need to pay at least $${minPayment.toFixed(2)} per month to cover the interest and start paying down the principal.`);
+            } else {
+                alert('An error occurred while calculating. Please check your inputs and try again.');
+            }
         }
     });
 
@@ -67,8 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isNaN(monthlyPayment) || monthlyPayment <= 0) {
                 throw new Error('Invalid fixed monthly payment');
             }
+            const minPayment = balance * monthlyInterestRate + 1; // $1 more than interest to pay some principal
             if (monthlyPayment <= balance * monthlyInterestRate) {
-                throw new Error('Monthly payment is too low to pay off the balance');
+                const error = new Error('Monthly payment is too low to pay off the balance');
+                error.minPayment = minPayment;
+                throw error;
             }
             monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
         }

@@ -8,6 +8,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentTableDiv = document.getElementById('paymentTable');
     let payoffChart;
 
+    // New function to handle input focus
+    function handleInputFocus(event) {
+        if (window.innerWidth <= 768) { // Check if it's a mobile device
+            window.scrollTo(0, event.target.offsetTop - 20);
+        }
+    }
+
+    // Add event listeners for input focus
+    document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
+        input.addEventListener('focus', handleInputFocus);
+    });
+
     function toggleGoalSelection(selectedButton, otherButton) {
         selectedButton.classList.add('selected');
         otherButton.classList.remove('selected');

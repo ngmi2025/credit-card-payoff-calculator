@@ -102,10 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
-        document.getElementById('monthlyPayment').textContent = `$${Math.round(monthlyPayment)}`;
-        document.getElementById('startDate').textContent = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-        document.getElementById('payOffDate').textContent = payOffDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-        document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest)}`;
+        document.getElementById('monthlyPayment').innerHTML = `Monthly Payment:<br>$${Math.round(monthlyPayment)}`;
+        document.getElementById('startDate').innerHTML = `Start Date:<br>${startDate.toLocaleString('default', { month: 'short', year: 'numeric' })}`;
+        document.getElementById('payOffDate').innerHTML = `Pay Off Date:<br>${payOffDate.toLocaleString('default', { month: 'short', year: 'numeric' })}`;
+        document.getElementById('totalInterest').innerHTML = `Total Interest:<br>$${Math.round(totalInterest)}`;
         resultsDiv.style.display = 'block';
     }
 
@@ -188,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,

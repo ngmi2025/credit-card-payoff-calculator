@@ -168,7 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const monthYear = currentDate.toLocaleString('default', { month: 'short', year: '2-digit' });
             labels.push(monthYear);
             balanceData.push(currentBalance);
-            currentBalance = Math.max(0, currentBalance - monthlyPayment + (currentBalance * monthlyInterestRate));
+            const interestThisMonth = currentBalance * monthlyInterestRate;
+            currentBalance = Math.max(0, currentBalance - monthlyPayment + interestThisMonth);
         }
 
         if (payoffChart) {
@@ -183,7 +184,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: 'Balance',
                     data: balanceData,
                     borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                    tension: 0.1,
+                    fill: false
                 }]
             },
             options: {

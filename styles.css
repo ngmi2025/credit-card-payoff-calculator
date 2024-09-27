@@ -104,100 +104,82 @@ button:hover {
 
 .result-label {
     font-weight: bold;
-    color: #555;
+    margin-bottom: 5px;
 }
 
 .result-value {
-    font-size: 18px;
-    color: black;
-    display: block;
-    margin-top: 5px;
+    font-size: 1.2em;
+    color: #007bff;
 }
 
-/* Actionable Insights */
-#actionableInsight {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #fff3cd;
-    border-left: 5px solid #ffc107;
-    color: #856404;
-}
-
-/* Chart Styles */
+/* Chart styles */
 #payoffChart {
-    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
 }
 
-/* Payment Comparison Table */
-table {
+/* Payment Table styles */
+#paymentTable {
+    margin-top: 20px;
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
-th, td {
-    padding: 12px;
-    text-align: center;
+#paymentTable th, #paymentTable td {
     border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
-th {
+#paymentTable th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
 
-tr:nth-child(even) {
-    background-color: #f8f8f8;
+#paymentTable tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-/* Balance Transfer Recommendation */
+/* Balance Transfer Recommendation Styles */
 #balanceTransferRecommendation {
-    background-color: #ffffff;
-    border: 1px solid #e8e8e8;
-    border-radius: 8px;
+    margin-top: 40px;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-#balanceTransferRecommendation h2 {
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 20px;
+    background-color: #f0f8ff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .card-info {
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    padding: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .card-header {
     display: flex;
-    margin-bottom: 15px;
     align-items: flex-start;
+    margin-bottom: 20px;
 }
 
 .card-image-column {
-    flex: 1;
-    max-width: 25%;
+    flex: 0 0 40%;
+    max-width: 40%;
     margin-right: 20px;
 }
 
 .card-image {
     width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 .card-title-column {
-    flex: 3;
+    flex: 1;
 }
 
-.card-title-column h3 {
+.card-title {
     color: #0077be;
     margin-top: 0;
-    margin-bottom: 10px;
 }
 
 .card-description {
@@ -273,7 +255,7 @@ tr:nth-child(even) {
 }
 
 .learn-more-button {
-    background-color: #a0a0a0;
+    background-color: #e0e0e0;
     color: #333;
 }
 
@@ -293,12 +275,12 @@ tr:nth-child(even) {
     }
 
     .card-image {
-        max-width: 300px;
+        max-width: 80%;
         margin: 0 auto;
         display: block;
     }
 
     .card-title-column {
-        text-align: left;
+        text-align: center;
     }
 }

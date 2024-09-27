@@ -109,22 +109,30 @@ document.addEventListener('DOMContentLoaded', function() {
         resultsDiv.style.display = 'block';
     }
 
-    function displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate) {
+    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseTotalInterest, startDate) {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
+
+        // Calculate base months to pay and base interest
+        const baseMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, baseMonthlyPayment);
+        const baseInterest = calculateTotalInterest(balance, baseMonthlyPayment, baseMonthsToPay);
+
         const payments = [
-            monthlyPayment,
-            monthlyPayment * 1.1,
-            monthlyPayment * 1.2
+            baseMonthlyPayment,
+            baseMonthlyPayment * 1.1,
+            baseMonthlyPayment * 1.2
         ];
 
+        // Loop through the different payment amounts
         payments.forEach(payment => {
             const months = calculateMonthsToPay(balance, monthlyInterestRate, payment);
             const interest = calculateTotalInterest(balance, payment, months);
-            const savings = totalInterest - interest;
+
+            // Calculate interest savings compared to the base payment
+            const savings = baseInterest - interest;
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${payment.toFixed(2)}`;
-            row.insertCell(1).textContent = `$${savings.toFixed(2)}`;
+            row.insertCell(1).textContent = savings > 0 ? `$${savings.toFixed(2)}` : `$0.00`;  // Ensure savings is never negative
             row.insertCell(2).textContent = months;
         });
 
@@ -138,8 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const monthlyInterestRate = annualInterestRate / 12;
         const newMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, increasedPayment);
         const newTotalInterest = calculateTotalInterest(balance, increasedPayment, newMonthsToPay);
-        const interestSavings = totalInterest - newTotalInterest;
-        const timeSavings = monthsToPay - newMonthsToPay;
+        const interestSavings = Math.max(0, totalInterest - newTotalInterest);
+        const timeSavings = Math.max(0, monthsToPay - newMonthsToPay);
 
         const insightElement = document.getElementById('actionableInsight');
         insightElement.textContent = `By increasing your monthly payment to $${increasedPayment.toFixed(2)}, you could save $${interestSavings.toFixed(2)} in interest and pay off your balance ${timeSavings} months earlier.`;

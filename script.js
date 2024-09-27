@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
 
-        // Calculate base months to pay and base interest
         const baseMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, baseMonthlyPayment);
         const baseInterest = calculateTotalInterest(balance, baseMonthlyPayment, baseMonthsToPay);
 
@@ -125,16 +124,13 @@ document.addEventListener('DOMContentLoaded', function() {
             baseMonthlyPayment * 1.2
         ];
 
-        // Loop through the different payment amounts
         payments.forEach(payment => {
             const months = calculateMonthsToPay(balance, monthlyInterestRate, payment);
             const interest = calculateTotalInterest(balance, payment, months);
-
-            // Calculate interest savings compared to the base payment
-            const savings = baseInterest - interest;
+            const savings = Math.max(0, baseInterest - interest);
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${payment.toFixed(2)}`;
-            row.insertCell(1).textContent = savings > 0 ? `$${savings.toFixed(2)}` : `$0.00`;  // Ensure savings is never negative
+            row.insertCell(1).textContent = `$${savings.toFixed(2)}`;
             row.insertCell(2).textContent = months;
         });
 
@@ -162,16 +158,21 @@ document.addEventListener('DOMContentLoaded', function() {
         let currentBalance = balance;
         const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
 
-        for (let i = 0; i <= monthsToPay; i++) {
+        const maxIterations = Math.min(monthsToPay, 360); // Limit to 30 years max
+
+        for (let i = 0; i <= maxIterations; i++) {
             const currentDate = new Date(startDate);
             currentDate.setMonth(currentDate.getMonth() + i);
             const monthYear = currentDate.toLocaleString('default', { month: 'short', year: '2-digit' });
             labels.push(monthYear);
 
-            // Correct balance reduction
             const interestThisMonth = currentBalance * monthlyInterestRate;
             currentBalance = Math.max(0, currentBalance - (monthlyPayment - interestThisMonth));
             balanceData.push(currentBalance);
+
+            if (currentBalance <= 1) {
+                break;
+            }
         }
 
         if (payoffChart) {
@@ -228,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculateBalanceTransferSavings(balance, totalInterest) {
-        // Assuming a 3% balance transfer fee and 21 months of 0% APR
         const transferFee = balance * 0.03;
         const currentMonthlyPayment = parseFloat(document.getElementById('fixedMonthlyPayment').value) || 
                                       (balance / parseFloat(document.getElementById('monthsToPay').value));

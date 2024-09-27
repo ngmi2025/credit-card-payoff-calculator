@@ -186,6 +186,7 @@ tr:nth-child(even) {
 .card-header {
     display: flex;
     margin-bottom: 15px;
+    flex-direction: row-reverse;
 }
 
 .card-image-column {
@@ -202,6 +203,7 @@ tr:nth-child(even) {
 
 .card-title-column {
     flex: 3;
+    padding-right: 15px;
 }
 
 .card-title-column h3 {
@@ -283,7 +285,7 @@ tr:nth-child(even) {
 }
 
 .learn-more-button {
-    background-color: #f0f0f0;
+    background-color: #d0d0d0;
     color: #333;
 }
 
@@ -312,5 +314,6 @@ tr:nth-child(even) {
     .card-title-column {
         text-align: left;
         order: 1;
+        padding-right: 0;
     }
 }

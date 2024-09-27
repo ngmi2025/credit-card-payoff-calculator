@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
         displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
         displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
         displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
-displayPayoffChart(balance, monthlyPayment, annualInterestRate, startDate);
+        displayPayoffChart(balance, monthlyPayment, annualInterestRate, startDate);
         displayBalanceTransferRecommendation(balance, totalInterest);
 
         resultsDiv.classList.add('highlight');
@@ -151,97 +151,97 @@ displayPayoffChart(balance, monthlyPayment, annualInterestRate, startDate);
         insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${timeSavings} months earlier.`;
     }
 
-function displayPayoffChart(balance, monthlyPayment, annualInterestRate, startDate) {
-    const ctx = document.getElementById('payoffChart').getContext('2d');
-    const { labels, balanceData } = generatePayoffData(balance, monthlyPayment, annualInterestRate, startDate);
+    function displayPayoffChart(balance, monthlyPayment, annualInterestRate, startDate) {
+        const ctx = document.getElementById('payoffChart').getContext('2d');
+        const { labels, balanceData } = generatePayoffData(balance, monthlyPayment, annualInterestRate, startDate);
 
-    if (payoffChart) {
-        payoffChart.destroy();
-    }
+        if (payoffChart) {
+            payoffChart.destroy();
+        }
 
-    payoffChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Balance',
-                data: balanceData,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1,
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Balance ($)'
+        payoffChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Balance',
+                    data: balanceData,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Balance ($)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
                     },
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + value.toLocaleString();
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        },
+                        ticks: {
+                            maxTicksLimit: 12 // Limit the number of x-axis labels
                         }
                     }
                 },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    },
-                    ticks: {
-                        maxTicksLimit: 12 // Limit the number of x-axis labels
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                }
+                                return label;
                             }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
-                            }
-                            return label;
                         }
                     }
                 }
             }
-        }
-    });
-}
-
-function generatePayoffData(balance, monthlyPayment, annualInterestRate, startDate) {
-    const labels = [];
-    const balanceData = [];
-    let currentBalance = balance;
-    const monthlyInterestRate = annualInterestRate / 12 / 100;
-    let currentDate = new Date(startDate);
-
-    while (currentBalance > 0 && labels.length < 360) { // Limit to 30 years
-        labels.push(formatDate(currentDate));
-        balanceData.push(currentBalance);
-
-        const interestThisMonth = currentBalance * monthlyInterestRate;
-        currentBalance = Math.max(0, currentBalance - monthlyPayment + interestThisMonth);
-
-        currentDate.setMonth(currentDate.getMonth() + 1);
-
-        if (currentBalance < 1) break; // Stop if balance is essentially zero
+        });
     }
 
-    return { labels, balanceData };
-}
+    function generatePayoffData(balance, monthlyPayment, annualInterestRate, startDate) {
+        const labels = [];
+        const balanceData = [];
+        let currentBalance = balance;
+        const monthlyInterestRate = annualInterestRate / 12;
+        let currentDate = new Date(startDate);
 
-function formatDate(date) {
-    return date.toLocaleString('default', { month: 'short', year: 'numeric' });
-}
+        while (currentBalance > 0 && labels.length < 360) { // Limit to 30 years
+            labels.push(formatDate(currentDate));
+            balanceData.push(currentBalance);
+
+            const interestThisMonth = currentBalance * monthlyInterestRate;
+            currentBalance = Math.max(0, currentBalance - monthlyPayment + interestThisMonth);
+
+            currentDate.setMonth(currentDate.getMonth() + 1);
+
+            if (currentBalance < 1) break; // Stop if balance is essentially zero
+        }
+
+        return { labels, balanceData };
+    }
+
+    function formatDate(date) {
+        return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+    }
 
     function displayBalanceTransferRecommendation(balance, totalInterest) {
         const recommendationDiv = document.getElementById('balanceTransferRecommendation');

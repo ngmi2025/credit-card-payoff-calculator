@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const calculateButton = document.getElementById('calculate');
     const resultsDiv = document.getElementById('results');
     const paymentTableDiv = document.getElementById('paymentTable');
+    let payoffChart;
 
     function toggleGoalSelection(selectedButton, otherButton) {
         selectedButton.classList.add('selected');
@@ -54,10 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isNaN(monthlyPayment) || monthlyPayment <= 0) {
                 throw new Error('Invalid fixed monthly payment');
             }
-            const minimumPayment = balance * monthlyInterestRate;
-            if (monthlyPayment <= minimumPayment) {
-                const minimumPaymentSuggestion = (minimumPayment + 1).toFixed(2);
-                alert(`The monthly payment of $${monthlyPayment.toFixed(2)} is too low to pay off the balance. It needs to be at least $${minimumPaymentSuggestion} to cover the monthly interest and make progress on the principal. At your current payment rate, the balance will continue to grow due to accruing interest.`);
+            if (monthlyPayment <= balance * monthlyInterestRate) {
+                alert('The monthly payment is too low to pay off the balance. It will take an infinite amount of time.');
                 return;
             }
             monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
@@ -70,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
         displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
         displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
+        displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate);
         displayBalanceTransferRecommendation(balance, totalInterest);
 
         resultsDiv.classList.add('highlight');
@@ -85,47 +85,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculateTotalInterest(balance, monthlyPayment, months) {
-        let totalInterest = 0;
-        let remainingBalance = balance;
-        const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
-
-        for (let i = 0; i < months; i++) {
-            const interestThisMonth = remainingBalance * monthlyInterestRate;
-            totalInterest += interestThisMonth;
-            remainingBalance -= (monthlyPayment - interestThisMonth);
-            if (remainingBalance <= 0) break;
-        }
-
-        return totalInterest;
+        return monthlyPayment * months - balance;
     }
 
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
-        document.getElementById('monthlyPayment').innerHTML = `<span class="result-value">$${Math.round(monthlyPayment)}</span>`;
-        document.getElementById('startDate').innerHTML = `<span class="result-value">${startDate.toLocaleString('default', { month: 'short', year: 'numeric' })}</span>`;
-        document.getElementById('payOffDate').innerHTML = `<span class="result-value">${payOffDate.toLocaleString('default', { month: 'short', year: 'numeric' })}</span>`;
-        document.getElementById('totalInterest').innerHTML = `<span class="result-value">$${Math.round(totalInterest)}</span>`;
+        document.getElementById('monthlyPayment').textContent = `$${monthlyPayment.toFixed(2)}`;
+        document.getElementById('startDate').textContent = startDate.toLocaleDateString();
+        document.getElementById('payOffDate').textContent = payOffDate.toLocaleDateString();
+        document.getElementById('totalInterest').textContent = `$${totalInterest.toFixed(2)}`;
         resultsDiv.style.display = 'block';
     }
 
-    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseTotalInterest, startDate) {
+    function displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate) {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
-
-        const baseMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, baseMonthlyPayment);
-        const baseInterest = calculateTotalInterest(balance, baseMonthlyPayment, baseMonthsToPay);
-
         const payments = [
-            baseMonthlyPayment,
-            baseMonthlyPayment * 1.05,
-            baseMonthlyPayment * 1.1,
-            baseMonthlyPayment * 1.15,
-            baseMonthlyPayment * 1.2
+            monthlyPayment,
+            monthlyPayment * 1.1,
+            monthlyPayment * 1.2
         ];
 
         payments.forEach(payment => {
             const months = calculateMonthsToPay(balance, monthlyInterestRate, payment);
             const interest = calculateTotalInterest(balance, payment, months);
-            const savings = Math.max(0, baseInterest - interest);
+            const savings = totalInterest - interest;
             const row = tableBody.insertRow();
             row.insertCell(0).textContent = `$${payment.toFixed(2)}`;
             row.insertCell(1).textContent = `$${savings.toFixed(2)}`;
@@ -142,11 +125,63 @@ document.addEventListener('DOMContentLoaded', function() {
         const monthlyInterestRate = annualInterestRate / 12;
         const newMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, increasedPayment);
         const newTotalInterest = calculateTotalInterest(balance, increasedPayment, newMonthsToPay);
-        const interestSavings = Math.max(0, totalInterest - newTotalInterest);
-        const timeSavings = Math.max(0, monthsToPay - newMonthsToPay);
+        const interestSavings = totalInterest - newTotalInterest;
+        const timeSavings = monthsToPay - newMonthsToPay;
 
         const insightElement = document.getElementById('actionableInsight');
-        insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${timeSavings} months earlier.`;
+        insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${Math.round(timeSavings)} months earlier.`;
+    }
+
+    function displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate) {
+        const ctx = document.getElementById('payoffChart').getContext('2d');
+        const labels = [];
+        const balanceData = [];
+        let currentBalance = balance;
+        const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+
+        for (let i = 0; i <= monthsToPay; i++) {
+            const currentDate = new Date(startDate);
+            currentDate.setMonth(currentDate.getMonth() + i);
+            const monthYear = currentDate.toLocaleString('default', { month: 'short', year: '2-digit' });
+            labels.push(monthYear);
+            balanceData.push(currentBalance);
+            currentBalance = Math.max(0, currentBalance - monthlyPayment + (currentBalance * monthlyInterestRate));
+        }
+
+        if (payoffChart) {
+            payoffChart.destroy();
+        }
+
+        payoffChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Balance',
+                    data: balanceData,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Balance ($)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months'
+                        }
+                    }
+                }
+            }
+        });
     }
 
     function displayBalanceTransferRecommendation(balance, totalInterest) {
@@ -160,14 +195,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculateBalanceTransferSavings(balance, totalInterest) {
+        // Assuming a 3% balance transfer fee
         const transferFee = balance * 0.03;
-        const currentMonthlyPayment = parseFloat(document.getElementById('fixedMonthlyPayment').value) || 
-                                      (balance / parseFloat(document.getElementById('monthsToPay').value));
-        const monthsAtZeroAPR = 21;
-        const remainingBalance = Math.max(0, balance - (currentMonthlyPayment * monthsAtZeroAPR));
-        const remainingMonths = Math.ceil(remainingBalance / currentMonthlyPayment);
-        const remainingInterest = calculateTotalInterest(remainingBalance, currentMonthlyPayment, remainingMonths);
-
-        return Math.max(0, totalInterest - transferFee - remainingInterest);
+        return Math.max(0, totalInterest - transferFee);
     }
 });

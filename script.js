@@ -102,10 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
-        document.getElementById('monthlyPayment').textContent = `$${monthlyPayment.toFixed(2)}`;
-        document.getElementById('startDate').textContent = startDate.toLocaleDateString();
-        document.getElementById('payOffDate').textContent = payOffDate.toLocaleDateString();
-        document.getElementById('totalInterest').textContent = `$${totalInterest.toFixed(2)}`;
+        document.getElementById('monthlyPayment').textContent = `$${Math.round(monthlyPayment)}`;
+        document.getElementById('startDate').textContent = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        document.getElementById('payOffDate').textContent = payOffDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest)}`;
         resultsDiv.style.display = 'block';
     }
 
@@ -119,7 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const payments = [
             baseMonthlyPayment,
+            baseMonthlyPayment * 1.05,
             baseMonthlyPayment * 1.1,
+            baseMonthlyPayment * 1.15,
             baseMonthlyPayment * 1.2
         ];
 
@@ -150,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const timeSavings = Math.max(0, monthsToPay - newMonthsToPay);
 
         const insightElement = document.getElementById('actionableInsight');
-        insightElement.textContent = `By increasing your monthly payment to $${increasedPayment.toFixed(2)}, you could save $${interestSavings.toFixed(2)} in interest and pay off your balance ${timeSavings} months earlier.`;
+        insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${timeSavings} months earlier.`;
     }
 
     function displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate) {

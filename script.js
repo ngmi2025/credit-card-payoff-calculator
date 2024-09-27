@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
         input.addEventListener('focus', handleInputFocus);
+        input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                calculatePayoff();
+            }
+        });
     });
 
     function toggleGoalSelection(selectedButton, otherButton) {
@@ -35,17 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calculateButton.addEventListener('click', function(event) {
         event.preventDefault();
-        try {
-            calculatePayoff();
-        } catch (error) {
-            console.error('Error in calculatePayoff:', error);
-            if (error.message.includes('Monthly payment is too low')) {
-                const minPayment = error.minPayment;
-                alert(`The monthly payment you entered is too low to pay off the balance. You need to pay at least $${minPayment.toFixed(2)} per month to cover the interest and start paying down the principal.`);
-            } else {
-                alert(error.message || 'An error occurred while calculating. Please check your inputs and try again.');
-            }
-        }
+        calculatePayoff();
     });
 
     function validateInput(value, min, max, errorMessage) {
@@ -57,38 +53,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculatePayoff() {
-        const balance = validateInput(document.getElementById('balance').value, 0, 1000000, 'Invalid balance. Please enter a number between 0 and 1,000,000.');
-        const annualInterestRate = validateInput(document.getElementById('interestRate').value, 0, 100, 'Invalid interest rate. Please enter a number between 0 and 100.') / 100;
-        const monthlyInterestRate = annualInterestRate / 12;
-        const payoffGoal = document.querySelector('.goal-button.selected').id;
-        let monthlyPayment, monthsToPay;
+        try {
+            const balance = validateInput(document.getElementById('balance').value, 0, 1000000, 'Invalid balance. Please enter a number between 0 and 1,000,000.');
+            const annualInterestRate = validateInput(document.getElementById('interestRate').value, 0, 100, 'Invalid interest rate. Please enter a number between 0 and 100.') / 100;
+            const monthlyInterestRate = annualInterestRate / 12;
+            const payoffGoal = document.querySelector('.goal-button.selected').id;
+            let monthlyPayment, monthsToPay;
 
-        if (payoffGoal === 'timeGoal') {
-            monthsToPay = validateInput(document.getElementById('monthsToPay').value, 1, 360, 'Invalid months to pay. Please enter a number between 1 and 360.');
-            monthlyPayment = calculateMonthlyPayment(balance, monthlyInterestRate, monthsToPay);
-        } else {
-            monthlyPayment = validateInput(document.getElementById('fixedMonthlyPayment').value, 0, balance, 'Invalid fixed monthly payment. Please enter a number between 0 and the balance amount.');
-            const minPayment = balance * monthlyInterestRate + 1; // $1 more than interest to pay some principal
-            if (monthlyPayment <= balance * monthlyInterestRate) {
-                const error = new Error('Monthly payment is too low to pay off the balance');
-                error.minPayment = minPayment;
-                throw error;
+            if (payoffGoal === 'timeGoal') {
+                monthsToPay = validateInput(document.getElementById('monthsToPay').value, 1, 360, 'Invalid months to pay. Please enter a number between 1 and 360.');
+                monthlyPayment = calculateMonthlyPayment(balance, monthlyInterestRate, monthsToPay);
+            } else {
+                monthlyPayment = validateInput(document.getElementById('fixedMonthlyPayment').value, 0, balance, 'Invalid fixed monthly payment. Please enter a number between 0 and the balance amount.');
+                const minPayment = balance * monthlyInterestRate + 1; // $1 more than interest to pay some principal
+                if (monthlyPayment <= balance * monthlyInterestRate) {
+                    throw new Error(`Monthly payment is too low to pay off the balance. Minimum payment required: $${minPayment.toFixed(2)}`);
+                }
+                monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
             }
-            monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
+
+            const totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
+            const startDate = new Date();
+            const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
+
+            displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
+            displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
+            displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
+            displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate);
+            displayBalanceTransferRecommendation(balance, totalInterest);
+
+            resultsDiv.classList.add('highlight');
+            setTimeout(() => resultsDiv.classList.remove('highlight'), 1000);
+        } catch (error) {
+            console.error('Error in calculatePayoff:', error);
+            alert(error.message || 'An error occurred while calculating. Please check your inputs and try again.');
         }
-
-        const totalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
-        const startDate = new Date();
-        const payOffDate = new Date(startDate.getTime() + monthsToPay * 30 * 24 * 60 * 60 * 1000);
-
-        displayResults(monthlyPayment, startDate, payOffDate, totalInterest);
-        displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate);
-        displayActionableInsight(monthlyPayment, totalInterest, monthsToPay);
-        displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate);
-        displayBalanceTransferRecommendation(balance, totalInterest);
-
-        resultsDiv.classList.add('highlight');
-        setTimeout(() => resultsDiv.classList.remove('highlight'), 1000);
     }
 
     function calculateMonthlyPayment(balance, monthlyInterestRate, months) {

@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('Invalid fixed monthly payment');
             }
             if (monthlyPayment <= balance * monthlyInterestRate) {
-                throw new Error('Monthly payment is too low to pay off the balance');
+                alert('The monthly payment is too low to pay off the balance. It will take an infinite amount of time.');
+                return;
             }
             monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
         }
@@ -79,52 +80,46 @@ document.addEventListener('DOMContentLoaded', function() {
         return (balance * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, months)) / (Math.pow(1 + monthlyInterestRate, months) - 1);
     }
 
-    function calculateMonthsToPay(balance, monthlyInterestRate, payment) {
-        return Math.log(payment / (payment - balance * monthlyInterestRate)) / Math.log(1 + monthlyInterestRate);
+    function calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment) {
+        return Math.ceil(Math.log(monthlyPayment / (monthlyPayment - balance * monthlyInterestRate)) / Math.log(1 + monthlyInterestRate));
     }
 
     function calculateTotalInterest(balance, monthlyPayment, months) {
         return monthlyPayment * months - balance;
     }
 
-    function formatDate(date) {
-        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const year = date.getFullYear().toString().slice(-2);
-        return `${months[date.getMonth()]} ${year}`;
-    }
-
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
-        document.getElementById('monthlyPayment').textContent = `$${Math.round(monthlyPayment)}`;
-        document.getElementById('startDate').textContent = formatDate(startDate);
-        document.getElementById('payOffDate').textContent = formatDate(payOffDate);
-        document.getElementById('totalInterest').textContent = `$${Math.round(totalInterest)}`;
+        document.getElementById('monthlyPayment').textContent = `$${monthlyPayment.toFixed(2)}`;
+        document.getElementById('startDate').textContent = startDate.toLocaleDateString();
+        document.getElementById('payOffDate').textContent = payOffDate.toLocaleDateString();
+        document.getElementById('totalInterest').textContent = `$${totalInterest.toFixed(2)}`;
         resultsDiv.style.display = 'block';
     }
 
-    function displayPaymentTable(balance, monthlyInterestRate, baseMonthlyPayment, baseTotalInterest, startDate) {
+    function displayPaymentTable(balance, monthlyInterestRate, monthlyPayment, totalInterest, startDate) {
         const tableBody = document.getElementById('paymentTableBody');
         tableBody.innerHTML = '';
+        const payments = [
+            monthlyPayment,
+            monthlyPayment * 1.1,
+            monthlyPayment * 1.2
+        ];
 
-        const baseMonthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, baseMonthlyPayment);
-        const baseTotalInterestRecalculated = calculateTotalInterest(balance, baseMonthlyPayment, baseMonthsToPay);
-
-        for (let i = 1; i <= 5; i++) {
-            const monthlyPayment = baseMonthlyPayment + (baseMonthlyPayment * i * 0.1);
-            const monthsToPay = calculateMonthsToPay(balance, monthlyInterestRate, monthlyPayment);
-            const newTotalInterest = calculateTotalInterest(balance, monthlyPayment, monthsToPay);
-            const interestSavings = baseTotalInterestRecalculated - newTotalInterest;
-
+        payments.forEach(payment => {
+            const months = calculateMonthsToPay(balance, monthlyInterestRate, payment);
+            const interest = calculateTotalInterest(balance, payment, months);
+            const savings = totalInterest - interest;
             const row = tableBody.insertRow();
-            row.insertCell(0).textContent = `$${Math.round(monthlyPayment)}`;
-            row.insertCell(1).textContent = `$${Math.round(interestSavings)}`;
-            row.insertCell(2).textContent = Math.round(monthsToPay);
-        }
+            row.insertCell(0).textContent = `$${payment.toFixed(2)}`;
+            row.insertCell(1).textContent = `$${savings.toFixed(2)}`;
+            row.insertCell(2).textContent = months;
+        });
 
         paymentTableDiv.style.display = 'block';
     }
 
     function displayActionableInsight(monthlyPayment, totalInterest, monthsToPay) {
-        const increasedPayment = monthlyPayment * 1.2;
+        const increasedPayment = monthlyPayment * 1.1;
         const balance = parseFloat(document.getElementById('balance').value);
         const annualInterestRate = parseFloat(document.getElementById('interestRate').value) / 100;
         const monthlyInterestRate = annualInterestRate / 12;

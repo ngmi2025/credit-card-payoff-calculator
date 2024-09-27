@@ -87,7 +87,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function calculateTotalInterest(balance, monthlyPayment, months) {
-        return monthlyPayment * months - balance;
+        let totalInterest = 0;
+        let remainingBalance = balance;
+        const monthlyInterestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+
+        for (let i = 0; i < months; i++) {
+            const interestThisMonth = remainingBalance * monthlyInterestRate;
+            totalInterest += interestThisMonth;
+            remainingBalance -= (monthlyPayment - interestThisMonth);
+            if (remainingBalance <= 0) break;
+        }
+
+        return totalInterest;
     }
 
     function displayResults(monthlyPayment, startDate, payOffDate, totalInterest) {
@@ -131,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const timeSavings = monthsToPay - newMonthsToPay;
 
         const insightElement = document.getElementById('actionableInsight');
-        insightElement.textContent = `By increasing your monthly payment to $${Math.round(increasedPayment)}, you could save $${Math.round(interestSavings)} in interest and pay off your balance ${Math.round(timeSavings)} months earlier.`;
+        insightElement.textContent = `By increasing your monthly payment to $${increasedPayment.toFixed(2)}, you could save $${interestSavings.toFixed(2)} in interest and pay off your balance ${timeSavings} months earlier.`;
     }
 
     function displayPayoffChart(balance, monthlyPayment, monthsToPay, startDate) {

@@ -149,23 +149,25 @@ button:hover {
 /* Chart styles */
 #payoffChart {
     width: 100%;
-    height: 400px;
-    max-width: 100%;
-    margin: 20px auto;
+    height: 300px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* Payment Table styles */
 #paymentTable {
-    margin-top: 20px;
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed; /* Ensure full-width table cells */
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-#paymentTable th,
-#paymentTable td {
-    border: 1px solid #ddd;
+#paymentTable th, #paymentTable td {
     padding: 12px;
     text-align: left;
+    border: 1px solid #ddd;
+    width: 33%; /* Ensure equal cell width */
 }
 
 #paymentTable th {
@@ -183,14 +185,14 @@ button:hover {
 
 /* Balance Transfer Recommendation styles */
 #balanceTransferRecommendation {
-    background-color: #f0f8ff;
+    background-color: #e6f7ff;
+    border: 1px solid #91d5ff;
+    border-radius: 4px;
     padding: 20px;
-    margin-top: 30px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
 }
 
-.card-info {
+.card-container {
     display: flex;
     flex-direction: column;
 }
